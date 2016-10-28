@@ -42,7 +42,7 @@ public class TheLampModule : MonoBehaviour
 
         var colorIndex = Rnd.Range(0, _lampColors.Length);
         var transparent = Rnd.Range(0, 2) == 0;
-        var color = _lampColors[colorIndex].WithAlpha(transparent ? .625f : 1f);
+        var color = _lampColors[colorIndex].WithAlpha(transparent ? .55f : 1f);
         Light1.color = color;
         Light2.color = color;
         Bulb.material.color = color;
