@@ -10,10 +10,11 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5cf2299c8864afe4ab42466f546ae20d, type: 3}
   m_Name: WorkshopItem
-  m_EditorClassIdentifier:
-  WorkshopPublishedFileID: 0
+  m_EditorClassIdentifier: 
+  WorkshopPublishedFileID: 788980366
   Title: The Lamp
-  Description: ""
+  Description: "How many bomb defusal experts does it take to screw in a light bulb?\r\n\r\n[url=http://ktane.timwi.de/TheLamp/TheLamp.html]Manual
+    HTML[/url]\r\n[url=http://ktane.timwi.de/TheLamp/TheLamp.pdf]Manual PDF[/url]"
   PreviewImage: {fileID: 2800000, guid: af4debe0ec6c4a34baab9dc352d67784, type: 3}
   Tags:
   - Regular Module

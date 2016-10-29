@@ -232,10 +232,10 @@ public class TheLampModule : MonoBehaviour
                 break;
 
             case 4:
-                if (isCorrect = (Bomb.IsIndicatorOn(KMBombInfoExtensions.KnownIndicatorLabel.CAR) ||
-                    Bomb.IsIndicatorOn(KMBombInfoExtensions.KnownIndicatorLabel.IND) ||
-                    Bomb.IsIndicatorOn(KMBombInfoExtensions.KnownIndicatorLabel.MSA) ||
-                    Bomb.IsIndicatorOn(KMBombInfoExtensions.KnownIndicatorLabel.SND) ? !o : o))
+                if (isCorrect = (Bomb.IsIndicatorPresent(KMBombInfoExtensions.KnownIndicatorLabel.CAR) ||
+                    Bomb.IsIndicatorPresent(KMBombInfoExtensions.KnownIndicatorLabel.IND) ||
+                    Bomb.IsIndicatorPresent(KMBombInfoExtensions.KnownIndicatorLabel.MSA) ||
+                    Bomb.IsIndicatorPresent(KMBombInfoExtensions.KnownIndicatorLabel.SND) ? !o : o))
                     _stage = o ? 10 : 9;
                 break;
 
