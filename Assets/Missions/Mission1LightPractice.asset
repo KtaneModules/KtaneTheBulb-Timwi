@@ -14,12 +14,12 @@ MonoBehaviour:
   DisplayName: Light Practice
   Description: Lamping 101.
   GeneratorSetting:
-    TimeLimit: 300
+    TimeLimit: 1800
     NumStrikes: 3
     TimeBeforeNeedyActivation: 90
     FrontFaceOnly: 0
     ComponentPools:
-    - Count: 1
+    - Count: 11
       AllowedSources: 2
       ComponentTypes: 
       SpecialComponentType: 0

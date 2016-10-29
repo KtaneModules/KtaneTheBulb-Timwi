@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Linq;
 using TheLamp;
 using UnityEngine;
@@ -37,7 +38,7 @@ public class TheLampModule : MonoBehaviour
     }
 
     private Color[] _lampColors = Ext.NewArray(
-        "3A9DFF",   // blue
+        "6AA8FF",   // blue (was 3A9DFF)
         "FF1E00",   // red
         "2EFD2F",   // green
         "EAE11F",   // yellow
@@ -82,9 +83,9 @@ public class TheLampModule : MonoBehaviour
 
         Debug.LogFormat("[TheLamp] Initial state: Color={0}, Opaque={1}, Initially on={2}", _lampColor, _opaque, _initiallyOn);
 
-        ButtonO.OnInteract += delegate { LogState();  HandleButtonPress(o: true); return false; };
-        ButtonI.OnInteract += delegate { LogState();  HandleButtonPress(o: false); return false; };
-        Bulb.OnInteract += delegate { LogState();  HandleBulb(); return false; };
+        ButtonO.OnInteract += delegate { HandleButtonPress(o: true); return false; };
+        ButtonI.OnInteract += delegate { HandleButtonPress(o: false); return false; };
+        Bulb.OnInteract += delegate { HandleBulb(); return false; };
 
         Module.OnActivate += delegate
         {
@@ -93,22 +94,33 @@ public class TheLampModule : MonoBehaviour
         };
     }
 
-    private void LogState()
-    {
-        Debug.LogFormat("Current state: wentOffAtStep1={0}, rememberedIndicatorPresent={1}, isBulbUnscrewed={2}, mustUndoBulbScrewing={3}, pressedOAtStep1={4}, wentOnAtScrewIn={5}, stage={6}",
-            _wentOffAtStep1, _rememberedIndicatorPresent, _isBulbUnscrewed, _mustUndoBulbScrewing, _pressedOAtStep1, _wentOnAtScrewIn, _stage);
-    }
-
     private void TurnLights(bool on)
     {
         Light1.enabled = on;
         Light2.enabled = on;
     }
 
+    private bool _isScrewing;
+
+    private IEnumerator Screw(bool @in)
+    {
+        for (int i = 0; i < 360 / 10; i++)
+        {
+            yield return null;
+            Bulb.transform.Rotate(Vector3.up, @in ? 15 : -15);
+            Bulb.transform.Translate(new Vector3(0, @in ? -.0015f : .0015f, 0));
+        }
+        _isScrewing = false;
+        if (_wentOnAtScrewIn)
+            TurnLights(on: true);
+    }
+
     private void HandleBulb()
     {
-        // TODO: Animate screwing
-
+        if (_isScrewing)
+            return;
+        _isScrewing = true;
+        StartCoroutine(Screw(_isBulbUnscrewed));
         _isBulbUnscrewed = !_isBulbUnscrewed;
 
         if (_mustUndoBulbScrewing)
@@ -122,13 +134,13 @@ public class TheLampModule : MonoBehaviour
         var origStage = _stage;
 
         if (_stage >= 200)
-            _stage -= 200;
-        else if (_stage >= 100)
         {
-            _stage -= 100;
-            if (new[] { 7, 8, 9, 10 }.Contains(_stage))
-                TurnLights(on: _wentOnAtScrewIn = (Rnd.Range(0, 2) == 0));
+            _stage -= 200;
+            if (_stage == 12 || _stage == 13)
+                _wentOnAtScrewIn = (Rnd.Range(0, 2) == 0);
         }
+        else if (_stage >= 100)
+            _stage -= 100;
         else
         {
             isCorrect = false;
@@ -172,6 +184,8 @@ public class TheLampModule : MonoBehaviour
 
     private void HandleButtonPress(bool o)
     {
+        Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, Bulb.transform);
+
         if (_mustUndoBulbScrewing)
         {
             Debug.LogFormat("[TheLamp] The light bulb should have been {0} before pressing any more buttons.", _isBulbUnscrewed ? "screwed back in" : "unscrewed again");
@@ -191,7 +205,7 @@ public class TheLampModule : MonoBehaviour
                     if (_opaque
                         ? (_lampColor == LampColor.Green || _lampColor == LampColor.Purple)
                         : (_lampColor == LampColor.Red || _lampColor == LampColor.White))
-                        TurnLights(on: _wentOffAtStep1 = (Rnd.Range(0, 2) == 0));
+                        TurnLights(on: !(_wentOffAtStep1 = (Rnd.Range(0, 2) == 0)));
                     else
                         TurnLights(on: false);
                     _stage = o ? 3 : 2;
@@ -300,9 +314,12 @@ public class TheLampModule : MonoBehaviour
         }
 
         Debug.LogFormat("[TheLamp] Pressing {0} at stage {1} with the bulb {2}: {3}.", o ? "O" : "I", origStage, _isBulbUnscrewed ? "unscrewed" : "screwed in", isCorrect ? "CORRECT, stage is now: " + _stage : "WRONG");
-        if (isCorrect && _stage == 0)
-            Module.HandlePass();
-        else if (!isCorrect)
+        if (!isCorrect)
             Module.HandleStrike();
+        else if (_stage == 0)
+        {
+            TurnLights(on: false);
+            Module.HandlePass();
+        }
     }
 }
