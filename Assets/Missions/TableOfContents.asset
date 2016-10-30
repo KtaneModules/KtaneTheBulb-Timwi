@@ -13,6 +13,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Title: The Bulb Missions
   Sections:
-  - Title: The Lamp
+  - Title: The Bulb
     MissionIDs:
     - Mission1LightPractice

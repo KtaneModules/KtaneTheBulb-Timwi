@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Name: WorkshopItem
   m_EditorClassIdentifier: 
   WorkshopPublishedFileID: 788980366
-  Title: The Lamp
-  Description: "How many bomb defusal experts does it take to screw in a light bulb?\r\n\r\n[url=http://ktane.timwi.de/TheLamp/TheLamp.html]Manual
-    HTML[/url]\r\n[url=http://ktane.timwi.de/TheLamp/TheLamp.pdf]Manual PDF[/url]"
+  Title: The Bulb
+  Description: "How many bomb defusal experts does it take to screw in a light bulb?\r\n\r\n[url=http://ktane.timwi.de/TheBulb/TheBulb.html]Manual
+    HTML[/url]\r\n[url=http://ktane.timwi.de/TheBulb/TheBulb.pdf]Manual PDF[/url]"
   PreviewImage: {fileID: 2800000, guid: af4debe0ec6c4a34baab9dc352d67784, type: 3}
   Tags:
   - Regular Module

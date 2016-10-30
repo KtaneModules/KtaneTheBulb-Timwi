@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Name: Mission1LightPractice
   m_EditorClassIdentifier: 
   DisplayName: Light Practice
-  Description: Lamping 101.
+  Description: Bulbing 101.
   GeneratorSetting:
     TimeLimit: 1800
     NumStrikes: 3
