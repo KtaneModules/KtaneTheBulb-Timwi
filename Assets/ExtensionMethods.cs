@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace TheLamp
+namespace TheBulb
 {
     static class Ext
     {

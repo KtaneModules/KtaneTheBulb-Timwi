@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections;
 using System.Linq;
-using TheLamp;
+using TheBulb;
 using UnityEngine;
 
 using Rnd = UnityEngine.Random;
 
 /// <summary>
-/// On the Subject of The Lamp
+/// On the Subject of The Bulb
 /// Created by Timwi
 /// </summary>
-public class TheLampModule : MonoBehaviour
+public class TheBulbModule : MonoBehaviour
 {
     public KMBombModule Module;
     public KMBombInfo Bomb;
@@ -27,7 +27,7 @@ public class TheLampModule : MonoBehaviour
     public Transform OFace;
     public Transform IFace;
 
-    enum LampColor
+    enum BulbColor
     {
         Blue,
         Red,
@@ -37,9 +37,9 @@ public class TheLampModule : MonoBehaviour
         Purple
     }
 
-    private Color[] _lampColors = Ext.NewArray(
+    private Color[] _bulbColors = Ext.NewArray(
         "6AA8FF",   // blue (was 3A9DFF)
-        "FF1E00",   // red
+        "FF0005",   // red (was FF1E00)
         "2EFD2F",   // green
         "EAE11F",   // yellow
         "D2D2D2",   // white
@@ -49,7 +49,7 @@ public class TheLampModule : MonoBehaviour
         .Select(c => new Color(Convert.ToInt32(c.Substring(0, 2), 16) / 255f, Convert.ToInt32(c.Substring(2, 2), 16) / 255f, Convert.ToInt32(c.Substring(4, 2), 16) / 255f))
         .ToArray();
 
-    private LampColor _lampColor;
+    private BulbColor _bulbColor;
     private bool _opaque;
     private bool _initiallyOn;
     private bool _wentOffAtStep1;
@@ -73,15 +73,15 @@ public class TheLampModule : MonoBehaviour
             ButtonI = t;
         }
 
-        var colorIndex = Rnd.Range(0, _lampColors.Length);
-        _lampColor = (LampColor) colorIndex;
+        var colorIndex = Rnd.Range(0, _bulbColors.Length);
+        _bulbColor = (BulbColor) colorIndex;
         _opaque = Rnd.Range(0, 2) == 0;
         _initiallyOn = Rnd.Range(0, 2) == 0;
-        Glass.material.color = Light1.color = Light2.color = _lampColors[colorIndex].WithAlpha(_opaque ? 1f : .55f);
+        Glass.material.color = Light1.color = Light2.color = _bulbColors[colorIndex].WithAlpha(_opaque ? 1f : .55f);
         _stage = 0;
         _isBulbUnscrewed = false;
 
-        Debug.LogFormat("[TheLamp] Initial state: Color={0}, Opaque={1}, Initially on={2}", _lampColor, _opaque, _initiallyOn);
+        Debug.LogFormat("[TheBulb] Initial state: Color={0}, Opaque={1}, Initially on={2}", _bulbColor, _opaque, _initiallyOn);
 
         ButtonO.OnInteract += delegate { HandleButtonPress(o: true); return false; };
         ButtonI.OnInteract += delegate { HandleButtonPress(o: false); return false; };
@@ -125,7 +125,7 @@ public class TheLampModule : MonoBehaviour
 
         if (_mustUndoBulbScrewing)
         {
-            Debug.LogFormat("[TheLamp] Undoing incorrect {0}.", _isBulbUnscrewed ? "screwing in" : "unscrewing");
+            Debug.LogFormat("[TheBulb] Undoing incorrect {0}.", _isBulbUnscrewed ? "screwing in" : "unscrewing");
             _mustUndoBulbScrewing = false;
             return;
         }
@@ -153,26 +153,26 @@ public class TheLampModule : MonoBehaviour
                     break;
 
                 case 2:
-                    if (isCorrect = (_lampColor != LampColor.Red && _lampColor != LampColor.White))
+                    if (isCorrect = (_bulbColor != BulbColor.Red && _bulbColor != BulbColor.White))
                         _stage = 7;
                     break;
 
                 case 3:
-                    if (isCorrect = (_lampColor != LampColor.Green && _lampColor != LampColor.Purple))
+                    if (isCorrect = (_bulbColor != BulbColor.Green && _bulbColor != BulbColor.Purple))
                         _stage = 8;
                     break;
 
                 case 9:
-                    isCorrect = (_lampColor == LampColor.Purple || _lampColor == LampColor.Red) && !_isBulbUnscrewed;
+                    isCorrect = (_bulbColor == BulbColor.Purple || _bulbColor == BulbColor.Red) && !_isBulbUnscrewed;
                     break;
 
                 case 10:
-                    isCorrect = (_lampColor == LampColor.Green || _lampColor == LampColor.White) && !_isBulbUnscrewed;
+                    isCorrect = (_bulbColor == BulbColor.Green || _bulbColor == BulbColor.White) && !_isBulbUnscrewed;
                     break;
             }
         }
 
-        Debug.LogFormat("[TheLamp] {0} at stage {1}: {2}.", _isBulbUnscrewed ? "Unscrewing" : "Screwing in", origStage, isCorrect ? "CORRECT, stage is now: " + _stage : "WRONG");
+        Debug.LogFormat("[TheBulb] {0} at stage {1}: {2}.", _isBulbUnscrewed ? "Unscrewing" : "Screwing in", origStage, isCorrect ? "CORRECT, stage is now: " + _stage : "WRONG");
         if (isCorrect && _stage == 0)
             Module.HandlePass();
         else if (!isCorrect)
@@ -188,7 +188,7 @@ public class TheLampModule : MonoBehaviour
 
         if (_mustUndoBulbScrewing)
         {
-            Debug.LogFormat("[TheLamp] The light bulb should have been {0} before pressing any more buttons.", _isBulbUnscrewed ? "screwed back in" : "unscrewed again");
+            Debug.LogFormat("[TheBulb] The light bulb should have been {0} before pressing any more buttons.", _isBulbUnscrewed ? "screwed back in" : "unscrewed again");
             Module.HandleStrike();
             return;
         }
@@ -203,8 +203,8 @@ public class TheLampModule : MonoBehaviour
                 {
                     isCorrect = true;
                     if (_opaque
-                        ? (_lampColor == LampColor.Green || _lampColor == LampColor.Purple)
-                        : (_lampColor == LampColor.Red || _lampColor == LampColor.White))
+                        ? (_bulbColor == BulbColor.Green || _bulbColor == BulbColor.Purple)
+                        : (_bulbColor == BulbColor.Red || _bulbColor == BulbColor.White))
                         TurnLights(on: !(_wentOffAtStep1 = (Rnd.Range(0, 2) == 0)));
                     else
                         TurnLights(on: false);
@@ -214,7 +214,7 @@ public class TheLampModule : MonoBehaviour
                 break;
 
             case 2:
-                if ((_lampColor == LampColor.Red && !o) || (_lampColor == LampColor.White && o))
+                if ((_bulbColor == BulbColor.Red && !o) || (_bulbColor == BulbColor.White && o))
                 {
                     isCorrect = true;
                     TurnLights(on: false);
@@ -223,7 +223,7 @@ public class TheLampModule : MonoBehaviour
                 break;
 
             case 3:
-                if ((_lampColor == LampColor.Green && !o) || (_lampColor == LampColor.Purple && o))
+                if ((_bulbColor == BulbColor.Green && !o) || (_bulbColor == BulbColor.Purple && o))
                 {
                     isCorrect = true;
                     TurnLights(on: false);
@@ -250,41 +250,41 @@ public class TheLampModule : MonoBehaviour
                 break;
 
             case 7:
-                _rememberedIndicatorPresent = Bomb.IsIndicatorPresent(_lampColor == LampColor.Blue ? KMBombInfoExtensions.KnownIndicatorLabel.CLR : KMBombInfoExtensions.KnownIndicatorLabel.SIG);
-                if (isCorrect = ((_lampColor == LampColor.Green) || (_lampColor == LampColor.Purple) ? !o : o))
-                    _stage = (_lampColor == LampColor.Blue) || (_lampColor == LampColor.Green) ? 11 : (_lampColor == LampColor.Purple) ? 212 : 213;
+                _rememberedIndicatorPresent = Bomb.IsIndicatorPresent(_bulbColor == BulbColor.Blue ? KMBombInfoExtensions.KnownIndicatorLabel.CLR : KMBombInfoExtensions.KnownIndicatorLabel.SIG);
+                if (isCorrect = ((_bulbColor == BulbColor.Green) || (_bulbColor == BulbColor.Purple) ? !o : o))
+                    _stage = (_bulbColor == BulbColor.Blue) || (_bulbColor == BulbColor.Green) ? 11 : (_bulbColor == BulbColor.Purple) ? 212 : 213;
                 break;
 
             case 8:
-                _rememberedIndicatorPresent = Bomb.IsIndicatorPresent(_lampColor == LampColor.White ? KMBombInfoExtensions.KnownIndicatorLabel.FRQ : KMBombInfoExtensions.KnownIndicatorLabel.FRK);
-                if (isCorrect = ((_lampColor == LampColor.White) || (_lampColor == LampColor.Red) ? !o : o))
-                    _stage = (_lampColor == LampColor.White) || (_lampColor == LampColor.Yellow) ? 11 : (_lampColor == LampColor.Red) ? 213 : 212;
+                _rememberedIndicatorPresent = Bomb.IsIndicatorPresent(_bulbColor == BulbColor.White ? KMBombInfoExtensions.KnownIndicatorLabel.FRQ : KMBombInfoExtensions.KnownIndicatorLabel.FRK);
+                if (isCorrect = ((_bulbColor == BulbColor.White) || (_bulbColor == BulbColor.Red) ? !o : o))
+                    _stage = (_bulbColor == BulbColor.White) || (_bulbColor == BulbColor.Yellow) ? 11 : (_bulbColor == BulbColor.Red) ? 213 : 212;
                 break;
 
             case 9:
                 if (isCorrect = (
-                    _lampColor == LampColor.Blue || _lampColor == LampColor.Green ? !o :
-                    _lampColor == LampColor.Yellow || _lampColor == LampColor.White ? o :
-                    _lampColor == LampColor.Purple ? !_isBulbUnscrewed && !o : !_isBulbUnscrewed && o))
+                    _bulbColor == BulbColor.Blue || _bulbColor == BulbColor.Green ? !o :
+                    _bulbColor == BulbColor.Yellow || _bulbColor == BulbColor.White ? o :
+                    _bulbColor == BulbColor.Purple ? !_isBulbUnscrewed && !o : !_isBulbUnscrewed && o))
                     _stage =
-                        _lampColor == LampColor.Blue ? 14 :
-                        _lampColor == LampColor.Green ? 212 :
-                        _lampColor == LampColor.Yellow ? 15 :
-                        _lampColor == LampColor.White ? 213 :
-                        _lampColor == LampColor.Purple ? 12 : 13;
+                        _bulbColor == BulbColor.Blue ? 14 :
+                        _bulbColor == BulbColor.Green ? 212 :
+                        _bulbColor == BulbColor.Yellow ? 15 :
+                        _bulbColor == BulbColor.White ? 213 :
+                        _bulbColor == BulbColor.Purple ? 12 : 13;
                 break;
 
             case 10:
                 if (isCorrect = (
-                    _lampColor == LampColor.Purple || _lampColor == LampColor.Red ? !o :
-                    _lampColor == LampColor.Blue || _lampColor == LampColor.Yellow ? o :
-                    _lampColor == LampColor.Green ? !_isBulbUnscrewed && !o : !_isBulbUnscrewed && o))
+                    _bulbColor == BulbColor.Purple || _bulbColor == BulbColor.Red ? !o :
+                    _bulbColor == BulbColor.Blue || _bulbColor == BulbColor.Yellow ? o :
+                    _bulbColor == BulbColor.Green ? !_isBulbUnscrewed && !o : !_isBulbUnscrewed && o))
                     _stage =
-                        _lampColor == LampColor.Purple ? 14 :
-                        _lampColor == LampColor.Red ? 213 :
-                        _lampColor == LampColor.Blue ? 15 :
-                        _lampColor == LampColor.Yellow ? 212 :
-                        _lampColor == LampColor.Green ? 13 : 12;
+                        _bulbColor == BulbColor.Purple ? 14 :
+                        _bulbColor == BulbColor.Red ? 213 :
+                        _bulbColor == BulbColor.Blue ? 15 :
+                        _bulbColor == BulbColor.Yellow ? 212 :
+                        _bulbColor == BulbColor.Green ? 13 : 12;
                 break;
 
             case 11:
@@ -313,7 +313,7 @@ public class TheLampModule : MonoBehaviour
                 break;
         }
 
-        Debug.LogFormat("[TheLamp] Pressing {0} at stage {1} with the bulb {2}: {3}.", o ? "O" : "I", origStage, _isBulbUnscrewed ? "unscrewed" : "screwed in", isCorrect ? "CORRECT, stage is now: " + _stage : "WRONG");
+        Debug.LogFormat("[TheBulb] Pressing {0} at stage {1} with the bulb {2}: {3}.", o ? "O" : "I", origStage, _isBulbUnscrewed ? "unscrewed" : "screwed in", isCorrect ? "CORRECT, stage is now: " + _stage : "WRONG");
         if (!isCorrect)
             Module.HandleStrike();
         else if (_stage == 0)

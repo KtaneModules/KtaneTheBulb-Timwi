@@ -2,7 +2,7 @@
 using System.Linq;
 using Newtonsoft.Json;
 
-namespace TheLamp
+namespace TheBulb
 {
     /// <summary>
     /// Some helper extensions methods for the KMBombInfo class.

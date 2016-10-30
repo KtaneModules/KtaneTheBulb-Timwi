@@ -116,7 +116,7 @@ GameObject:
   - 114: {fileID: 11496072}
   - 114: {fileID: 11485374}
   m_Layer: 0
-  m_Name: TheLampModule
+  m_Name: TheBulbModule
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -666,10 +666,10 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 127088}
-  m_LocalRotation: {x: 0.34202018, y: 0, z: 0, w: 0.9396926}
+  m_LocalRotation: {x: 0.29883632, y: 0.64085644, z: 0.29883626, w: 0.6408563}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_LocalEulerAnglesHint: {x: 40, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 50}
   m_Children:
   - {fileID: 453294}
   - {fileID: 479804}
@@ -1327,12 +1327,12 @@ Light:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 103954}
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 6
   m_Type: 2
   m_Color: {r: 0.41911763, g: 0.6614859, b: 1, a: 0.54901963}
   m_Intensity: 1
-  m_Range: 0.175
+  m_Range: 0.15
   m_SpotAngle: 30
   m_CookieSize: 10
   m_Shadows:
@@ -1360,12 +1360,12 @@ Light:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 198626}
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 6
   m_Type: 2
   m_Color: {r: 0.41911763, g: 0.6614859, b: 1, a: 0.54901963}
   m_Intensity: 1
-  m_Range: 0.12
+  m_Range: 0.11
   m_SpotAngle: 30
   m_CookieSize: 10
   m_Shadows:
@@ -1479,8 +1479,8 @@ MonoBehaviour:
   m_Script: {fileID: -119419473, guid: 45b809be76fd7a3468b6f517bced6f28, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ModuleType: TheLampModule
-  ModuleDisplayName: TheLamp
+  ModuleType: TheBulbModule
+  ModuleDisplayName: TheBulb
   RequiresTimerVisibility: 0
 --- !u!114 &11453128
 MonoBehaviour:
@@ -1534,7 +1534,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 127088}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2bf26422c7dc06c44a17e1284e0278f1, type: 3}
+  m_Script: {fileID: 11500000, guid: 4c3f9a7c9931e8846a8cfc265275d7d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   Module: {fileID: 11429752}
