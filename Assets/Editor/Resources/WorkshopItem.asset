@@ -10,11 +10,18 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5cf2299c8864afe4ab42466f546ae20d, type: 3}
   m_Name: WorkshopItem
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier:
   WorkshopPublishedFileID: 788980366
   Title: The Bulb
-  Description: "How many bomb defusal experts does it take to screw in a light bulb?\r\n\r\n[url=http://ktane.timwi.de/TheBulb/TheBulb.html]Manual
-    HTML[/url]\r\n[url=http://ktane.timwi.de/TheBulb/TheBulb.pdf]Manual PDF[/url]"
+  Description: "How many bomb defusal experts does it take to screw in a light bulb?
+
+
+Module created by Timwi.
+
+
+[url=http://ktane.timwi.de/PDF/The%20Bulb.pdf]Manual PDF[/url]
+
+[url=http://ktane.timwi.de/HTML/The%20Bulb.html]Manual HTML[/url]"
   PreviewImage: {fileID: 2800000, guid: af4debe0ec6c4a34baab9dc352d67784, type: 3}
   Tags:
   - Regular Module
