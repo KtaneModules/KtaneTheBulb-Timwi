@@ -83,9 +83,9 @@ public class TheBulbModule : MonoBehaviour
 
         Debug.LogFormat("[TheBulb] Initial state: Color={0}, Opaque={1}, Initially on={2}", _bulbColor, _opaque, _initiallyOn);
 
-        ButtonO.OnInteract += delegate { HandleButtonPress(o: true); return false; };
-        ButtonI.OnInteract += delegate { HandleButtonPress(o: false); return false; };
-        Bulb.OnInteract += delegate { HandleBulb(); return false; };
+        ButtonO.OnInteract += delegate { ButtonO.AddInteractionPunch(); HandleButtonPress(o: true); return false; };
+        ButtonI.OnInteract += delegate { ButtonI.AddInteractionPunch(); HandleButtonPress(o: false); return false; };
+        Bulb.OnInteract += delegate { Bulb.AddInteractionPunch(); HandleBulb(); return false; };
 
         Module.OnActivate += delegate
         {
