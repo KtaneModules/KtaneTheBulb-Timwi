@@ -1501,7 +1501,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ModuleType: TheBulbModule
-  ModuleDisplayName: TheBulb
+  ModuleDisplayName: The Bulb
   RequiresTimerVisibility: 0
 --- !u!114 &11453128
 MonoBehaviour:
