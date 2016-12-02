@@ -58,6 +58,7 @@ public class TheBulbModule : MonoBehaviour
     private bool _mustUndoBulbScrewing;
     private bool _pressedOAtStep1;
     private bool _wentOnAtScrewIn;
+    private bool _wasOnAtUnscrew;
     private int _stage;
 
     void Start()
@@ -78,7 +79,7 @@ public class TheBulbModule : MonoBehaviour
         _opaque = Rnd.Range(0, 2) == 0;
         _initiallyOn = Rnd.Range(0, 2) == 0;
         Glass.material.color = Light1.color = Light2.color = _bulbColors[colorIndex].WithAlpha(_opaque ? 1f : .55f);
-        _stage = 0;
+        _stage = -1;
         _isBulbUnscrewed = false;
 
         Debug.LogFormat("[TheBulb] Initial state: Color={0}, Opaque={1}, Initially on={2}", _bulbColor, _opaque, _initiallyOn);
@@ -89,7 +90,10 @@ public class TheBulbModule : MonoBehaviour
 
         Module.OnActivate += delegate
         {
-            TurnLights(on: _initiallyOn);
+            if (_isBulbUnscrewed || _isScrewing)
+                _wasOnAtUnscrew = _initiallyOn;
+            else
+                TurnLights(on: _initiallyOn);
             _stage = 1;
         };
     }
@@ -104,6 +108,12 @@ public class TheBulbModule : MonoBehaviour
 
     private IEnumerator Screw(bool @in)
     {
+        if (!@in)
+        {
+            _wasOnAtUnscrew = Light1.enabled;
+            TurnLights(on: false);
+        }
+
         for (int i = 0; i < 360 / 10; i++)
         {
             yield return null;
@@ -111,8 +121,10 @@ public class TheBulbModule : MonoBehaviour
             Bulb.transform.Translate(new Vector3(0, @in ? -.0015f : .0015f, 0));
         }
         _isScrewing = false;
-        if (_wentOnAtScrewIn)
+        if (@in && (_wasOnAtUnscrew || _wentOnAtScrewIn))
             TurnLights(on: true);
+        if (_stage == 0)
+            Module.HandlePass();
     }
 
     private void HandleBulb()
@@ -173,9 +185,7 @@ public class TheBulbModule : MonoBehaviour
         }
 
         Debug.LogFormat("[TheBulb] {0} at stage {1}: {2}.", _isBulbUnscrewed ? "Unscrewing" : "Screwing in", origStage, isCorrect ? "CORRECT, stage is now: " + _stage : "WRONG");
-        if (isCorrect && _stage == 0)
-            Module.HandlePass();
-        else if (!isCorrect)
+        if (!isCorrect)
         {
             Module.HandleStrike();
             _mustUndoBulbScrewing = true;
