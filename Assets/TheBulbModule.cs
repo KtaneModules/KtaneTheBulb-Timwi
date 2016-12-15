@@ -215,7 +215,10 @@ public class TheBulbModule : MonoBehaviour
                     if (_opaque
                         ? (_bulbColor == BulbColor.Green || _bulbColor == BulbColor.Purple)
                         : (_bulbColor == BulbColor.Red || _bulbColor == BulbColor.White))
+                    {
                         TurnLights(on: !(_wentOffAtStep1 = (Rnd.Range(0, 2) == 0)));
+                        Debug.LogFormat("[TheBulb] The light bulb {0} at step 1.", _wentOffAtStep1 ? "went off" : "did not go off");
+                    }
                     else
                         TurnLights(on: false);
                     _stage = o ? 3 : 2;
