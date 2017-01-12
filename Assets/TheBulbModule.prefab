@@ -1337,7 +1337,7 @@ Light:
   m_Enabled: 0
   serializedVersion: 7
   m_Type: 2
-  m_Color: {r: 0.41911763, g: 0.6614859, b: 1, a: 0.54901963}
+  m_Color: {r: 0.41568628, g: 0.65882355, b: 1, a: 0.54901963}
   m_Intensity: 1
   m_Range: 0.15
   m_SpotAngle: 30
@@ -1371,7 +1371,7 @@ Light:
   m_Enabled: 0
   serializedVersion: 7
   m_Type: 2
-  m_Color: {r: 0.41911763, g: 0.6614859, b: 1, a: 0.54901963}
+  m_Color: {r: 0.41568628, g: 0.65882355, b: 1, a: 0.54901963}
   m_Intensity: 1
   m_Range: 0.11
   m_SpotAngle: 30
@@ -1696,7 +1696,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShaderNames:
-  - Legacy Shaders/Transparent/Specular
+  - Legacy Shaders/Transparent/Diffuse
 --- !u!114 &114000012458804578
 MonoBehaviour:
   m_ObjectHideFlags: 1

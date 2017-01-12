@@ -37,7 +37,7 @@ public class TheBulbModule : MonoBehaviour
         Purple
     }
 
-    private Color[] _bulbColors = Ext.NewArray(
+    private Color[] _haloColors = Ext.NewArray(
         "6AA8FF",   // blue (was 3A9DFF)
         "FF0005",   // red (was FF1E00)
         "2EFD2F",   // green
@@ -45,7 +45,17 @@ public class TheBulbModule : MonoBehaviour
         "D2D2D2",   // white
         "F21DFF"    // purple
     )
-        .Where(s => s != null)
+        .Select(c => new Color(Convert.ToInt32(c.Substring(0, 2), 16) / 255f, Convert.ToInt32(c.Substring(2, 2), 16) / 255f, Convert.ToInt32(c.Substring(4, 2), 16) / 255f))
+        .ToArray();
+
+    private Color[] _bulbColors = Ext.NewArray(
+        "1B3E70",   // blue (was 3A9DFF)
+        "FF0005",   // red (was FF1E00)
+        "2EFD2F",   // green
+        "EAE11F",   // yellow
+        "D2D2D2",   // white
+        "F21DFF"    // purple
+    )
         .Select(c => new Color(Convert.ToInt32(c.Substring(0, 2), 16) / 255f, Convert.ToInt32(c.Substring(2, 2), 16) / 255f, Convert.ToInt32(c.Substring(4, 2), 16) / 255f))
         .ToArray();
 
@@ -78,7 +88,8 @@ public class TheBulbModule : MonoBehaviour
         _bulbColor = (BulbColor) colorIndex;
         _opaque = Rnd.Range(0, 2) == 0;
         _initiallyOn = Rnd.Range(0, 2) == 0;
-        Glass.material.color = Light1.color = Light2.color = _bulbColors[colorIndex].WithAlpha(_opaque ? 1f : .55f);
+        Glass.material.color = _bulbColors[colorIndex].WithAlpha(_opaque ? 1f : .55f);
+        Light1.color = Light2.color = _haloColors[colorIndex].WithAlpha(_opaque ? 1f : .55f);
         _stage = -1;
         _isBulbUnscrewed = false;
 
