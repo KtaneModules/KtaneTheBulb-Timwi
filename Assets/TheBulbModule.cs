@@ -70,6 +70,7 @@ public class TheBulbModule : MonoBehaviour
     private bool _wentOnAtScrewIn;
     private bool _wasOnAtUnscrew;
     private int _stage;
+    private string _correctButtonPresses;
 
     void Start()
     {
@@ -92,6 +93,7 @@ public class TheBulbModule : MonoBehaviour
         Light1.color = Light2.color = _haloColors[colorIndex].WithAlpha(_opaque ? 1f : .55f);
         _stage = -1;
         _isBulbUnscrewed = false;
+        _correctButtonPresses = "";
 
         Debug.LogFormat("[TheBulb] Initial state: Color={0}, Opaque={1}, Initially on={2}", _bulbColor, _opaque, _initiallyOn);
 
@@ -340,10 +342,15 @@ public class TheBulbModule : MonoBehaviour
         Debug.LogFormat("[TheBulb] Pressing {0} at stage {1} with the bulb {2}: {3}.", o ? "O" : "I", origStage, _isBulbUnscrewed ? "unscrewed" : "screwed in", isCorrect ? "CORRECT, stage is now: " + _stage : "WRONG");
         if (!isCorrect)
             Module.HandleStrike();
-        else if (_stage == 0)
+        else
         {
-            TurnLights(on: false);
-            Module.HandlePass();
+            _correctButtonPresses += o ? "O" : "I";
+            if (_stage == 0)
+            {
+                Debug.LogFormat("[TheBulb] Module solved. The correct button presses were: {0}", _correctButtonPresses);
+                TurnLights(on: false);
+                Module.HandlePass();
+            }
         }
     }
 }
