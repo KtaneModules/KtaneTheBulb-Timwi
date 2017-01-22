@@ -19,6 +19,7 @@ public class TheBulbModule : MonoBehaviour
     public Light Light1;
     public Light Light2;
     public MeshRenderer Glass;
+    public GameObject Filament;
 
     public KMSelectable ButtonO;
     public KMSelectable Bulb;
@@ -88,6 +89,7 @@ public class TheBulbModule : MonoBehaviour
         var colorIndex = Rnd.Range(0, _bulbColors.Length);
         _bulbColor = (BulbColor) colorIndex;
         _opaque = Rnd.Range(0, 2) == 0;
+        Filament.SetActive(!_opaque);
         _initiallyOn = Rnd.Range(0, 2) == 0;
         Glass.material.color = _bulbColors[colorIndex].WithAlpha(_opaque ? 1f : .55f);
         Light1.color = Light2.color = _haloColors[colorIndex].WithAlpha(_opaque ? 1f : .55f);
