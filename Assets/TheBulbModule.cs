@@ -73,8 +73,13 @@ public class TheBulbModule : MonoBehaviour
     private int _stage;
     private string _correctButtonPresses;
 
+    private static int _moduleIdCounter = 1;
+    private int _moduleId;
+
     void Start()
     {
+        _moduleId = _moduleIdCounter++;
+
         if (Rnd.Range(0, 2) == 0)
         {
             // Swap the buttons! Fun fun
@@ -97,7 +102,7 @@ public class TheBulbModule : MonoBehaviour
         _isBulbUnscrewed = false;
         _correctButtonPresses = "";
 
-        Debug.LogFormat("[TheBulb] Initial state: Color={0}, Opaque={1}, Initially on={2}", _bulbColor, _opaque, _initiallyOn);
+        Debug.LogFormat("[TheBulb #{3}] Initial state: Color={0}, Opaque={1}, Initially on={2}", _bulbColor, _opaque, _initiallyOn, _moduleId);
 
         ButtonO.OnInteract += delegate { ButtonO.AddInteractionPunch(); HandleButtonPress(o: true); return false; };
         ButtonI.OnInteract += delegate { ButtonI.AddInteractionPunch(); HandleButtonPress(o: false); return false; };
@@ -152,7 +157,7 @@ public class TheBulbModule : MonoBehaviour
 
         if (_mustUndoBulbScrewing)
         {
-            Debug.LogFormat("[TheBulb] Undoing incorrect {0}.", _isBulbUnscrewed ? "screwing in" : "unscrewing");
+            Debug.LogFormat("[TheBulb #{1}] Undoing incorrect {0}.", _isBulbUnscrewed ? "screwing in" : "unscrewing", _moduleId);
             _mustUndoBulbScrewing = false;
             return;
         }
@@ -199,7 +204,7 @@ public class TheBulbModule : MonoBehaviour
             }
         }
 
-        Debug.LogFormat("[TheBulb] {0} at stage {1}: {2}.", _isBulbUnscrewed ? "Unscrewing" : "Screwing in", origStage, isCorrect ? "CORRECT, stage is now: " + _stage : "WRONG");
+        Debug.LogFormat("[TheBulb #{3}] {0} at stage {1}: {2}.", _isBulbUnscrewed ? "Unscrewing" : "Screwing in", origStage, isCorrect ? "CORRECT, stage is now: " + _stage : "WRONG", _moduleId);
         if (!isCorrect)
         {
             Module.HandleStrike();
@@ -213,7 +218,7 @@ public class TheBulbModule : MonoBehaviour
 
         if (_mustUndoBulbScrewing)
         {
-            Debug.LogFormat("[TheBulb] The light bulb should have been {0} before pressing any more buttons.", _isBulbUnscrewed ? "screwed back in" : "unscrewed again");
+            Debug.LogFormat("[TheBulb #{1}] The light bulb should have been {0} before pressing any more buttons.", _isBulbUnscrewed ? "screwed back in" : "unscrewed again", _moduleId);
             Module.HandleStrike();
             return;
         }
@@ -232,7 +237,7 @@ public class TheBulbModule : MonoBehaviour
                         : (_bulbColor == BulbColor.Red || _bulbColor == BulbColor.White))
                     {
                         TurnLights(on: !(_wentOffAtStep1 = (Rnd.Range(0, 2) == 0)));
-                        Debug.LogFormat("[TheBulb] The light bulb {0} at step 1.", _wentOffAtStep1 ? "went off" : "did not go off");
+                        Debug.LogFormat("[TheBulb #{1}] The light bulb {0} at step 1.", _wentOffAtStep1 ? "went off" : "did not go off", _moduleId);
                     }
                     else
                         TurnLights(on: false);
@@ -341,7 +346,7 @@ public class TheBulbModule : MonoBehaviour
                 break;
         }
 
-        Debug.LogFormat("[TheBulb] Pressing {0} at stage {1} with the bulb {2}: {3}.", o ? "O" : "I", origStage, _isBulbUnscrewed ? "unscrewed" : "screwed in", isCorrect ? "CORRECT, stage is now: " + _stage : "WRONG");
+        Debug.LogFormat("[TheBulb #{4}] Pressing {0} at stage {1} with the bulb {2}: {3}.", o ? "O" : "I", origStage, _isBulbUnscrewed ? "unscrewed" : "screwed in", isCorrect ? "CORRECT, stage is now: " + _stage : "WRONG", _moduleId);
         if (!isCorrect)
             Module.HandleStrike();
         else
@@ -349,7 +354,7 @@ public class TheBulbModule : MonoBehaviour
             _correctButtonPresses += o ? "O" : "I";
             if (_stage == 0)
             {
-                Debug.LogFormat("[TheBulb] Module solved. The correct button presses were: {0}", _correctButtonPresses);
+                Debug.LogFormat("[TheBulb #{1}] Module solved. The correct button presses were: {0}", _correctButtonPresses, _moduleId);
                 TurnLights(on: false);
                 Module.HandlePass();
             }
