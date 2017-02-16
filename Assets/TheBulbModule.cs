@@ -68,7 +68,7 @@ public class TheBulbModule : MonoBehaviour
     private bool _isBulbUnscrewed;
     private bool _mustUndoBulbScrewing;
     private bool _pressedOAtStep1;
-    private bool _wentOnAtScrewIn;
+    private bool _wentOnBeforeStep12To15;
     private bool _wasOnAtUnscrew;
     private int _stage;
     private string _correctButtonPresses;
@@ -118,6 +118,18 @@ public class TheBulbModule : MonoBehaviour
         };
     }
 
+    private string stageToString(int stage)
+    {
+        if (stage >= 200)
+            return "Screw back in; then " + stageToString(stage - 200);
+        else if (stage >= 100)
+            return "Unscrew; then " + stageToString(stage - 100);
+        else if (stage == 0)
+            return "you’re done";
+        else
+            return "Step " + stage;
+    }
+
     private void TurnLights(bool on)
     {
         Light1.enabled = on;
@@ -141,7 +153,7 @@ public class TheBulbModule : MonoBehaviour
             Bulb.transform.Translate(new Vector3(0, @in ? -.0015f : .0015f, 0));
         }
         _isScrewing = false;
-        if (@in && (_wasOnAtUnscrew || _wentOnAtScrewIn))
+        if (@in && (_wasOnAtUnscrew || _wentOnBeforeStep12To15))
             TurnLights(on: true);
         if (_stage == 0)
             Module.HandlePass();
@@ -163,13 +175,16 @@ public class TheBulbModule : MonoBehaviour
         }
 
         var isCorrect = true;
-        var origStage = _stage;
+        var extra = "";
 
         if (_stage >= 200)
         {
             _stage -= 200;
             if (_stage == 12 || _stage == 13)
-                _wentOnAtScrewIn = (Rnd.Range(0, 2) == 0);
+            {
+                _wentOnBeforeStep12To15 = (Rnd.Range(0, 2) == 0);
+                extra = string.Format(" Bulb {0} at screw-in.", _wentOnBeforeStep12To15 ? "went on" : "did NOT go on");
+            }
         }
         else if (_stage >= 100)
             _stage -= 100;
@@ -204,7 +219,7 @@ public class TheBulbModule : MonoBehaviour
             }
         }
 
-        Debug.LogFormat("[TheBulb #{3}] {0} at stage {1}: {2}.", _isBulbUnscrewed ? "Unscrewing" : "Screwing in", origStage, isCorrect ? "CORRECT, stage is now: " + _stage : "WRONG", _moduleId);
+        Debug.LogFormat("[TheBulb #{2}] {0}: {1}.", _isBulbUnscrewed ? "Unscrewing" : "Screwing in", isCorrect ? string.Format("CORRECT.{0} Stage is now: {1}", extra, stageToString(_stage)) : "WRONG", _moduleId);
         if (!isCorrect)
         {
             Module.HandleStrike();
@@ -224,7 +239,7 @@ public class TheBulbModule : MonoBehaviour
         }
 
         var isCorrect = false;
-        var origStage = _stage;
+        var extra = "";
 
         switch (_stage)
         {
@@ -237,7 +252,7 @@ public class TheBulbModule : MonoBehaviour
                         : (_bulbColor == BulbColor.Red || _bulbColor == BulbColor.White))
                     {
                         TurnLights(on: !(_wentOffAtStep1 = (Rnd.Range(0, 2) == 0)));
-                        Debug.LogFormat("[TheBulb #{1}] The light bulb {0} at step 1.", _wentOffAtStep1 ? "went off" : "did not go off", _moduleId);
+                        Debug.LogFormat("[TheBulb #{1}] The light bulb {0} at Step 1.", _wentOffAtStep1 ? "went off" : "did not go off", _moduleId);
                     }
                     else
                         TurnLights(on: false);
@@ -299,12 +314,20 @@ public class TheBulbModule : MonoBehaviour
                     _bulbColor == BulbColor.Blue || _bulbColor == BulbColor.Green ? !o :
                     _bulbColor == BulbColor.Yellow || _bulbColor == BulbColor.White ? o :
                     _bulbColor == BulbColor.Purple ? !_isBulbUnscrewed && !o : !_isBulbUnscrewed && o))
+                {
                     _stage =
                         _bulbColor == BulbColor.Blue ? 14 :
                         _bulbColor == BulbColor.Green ? 212 :
                         _bulbColor == BulbColor.Yellow ? 15 :
                         _bulbColor == BulbColor.White ? 213 :
                         _bulbColor == BulbColor.Purple ? 12 : 13;
+                    if (_stage < 100)
+                    {
+                        _wentOnBeforeStep12To15 = (Rnd.Range(0, 2) == 0);
+                        extra = string.Format(" Bulb {0} at {1} button press.", _wentOnBeforeStep12To15 ? "went on" : "did NOT go on", o ? "O" : "I");
+                        TurnLights(on: _wentOnBeforeStep12To15);
+                    }
+                }
                 break;
 
             case 10:
@@ -312,12 +335,20 @@ public class TheBulbModule : MonoBehaviour
                     _bulbColor == BulbColor.Purple || _bulbColor == BulbColor.Red ? !o :
                     _bulbColor == BulbColor.Blue || _bulbColor == BulbColor.Yellow ? o :
                     _bulbColor == BulbColor.Green ? !_isBulbUnscrewed && !o : !_isBulbUnscrewed && o))
+                {
                     _stage =
                         _bulbColor == BulbColor.Purple ? 14 :
                         _bulbColor == BulbColor.Red ? 213 :
                         _bulbColor == BulbColor.Blue ? 15 :
                         _bulbColor == BulbColor.Yellow ? 212 :
                         _bulbColor == BulbColor.Green ? 13 : 12;
+                    if (_stage < 100)
+                    {
+                        _wentOnBeforeStep12To15 = (Rnd.Range(0, 2) == 0);
+                        extra = string.Format(" Bulb {0} at {1} button press.", _wentOnBeforeStep12To15 ? "went on" : "did NOT go on", o ? "O" : "I");
+                        TurnLights(on: _wentOnBeforeStep12To15);
+                    }
+                }
                 break;
 
             case 11:
@@ -326,12 +357,12 @@ public class TheBulbModule : MonoBehaviour
                 break;
 
             case 12:
-                if (isCorrect = (_wentOnAtScrewIn ? !o : o))
+                if (isCorrect = (_wentOnBeforeStep12To15 ? !o : o))
                     _stage = 0;
                 break;
 
             case 13:
-                if (isCorrect = (_wentOnAtScrewIn ? o : !o))
+                if (isCorrect = (_wentOnBeforeStep12To15 ? o : !o))
                     _stage = 0;
                 break;
 
@@ -346,7 +377,7 @@ public class TheBulbModule : MonoBehaviour
                 break;
         }
 
-        Debug.LogFormat("[TheBulb #{4}] Pressing {0} at stage {1} with the bulb {2}: {3}.", o ? "O" : "I", origStage, _isBulbUnscrewed ? "unscrewed" : "screwed in", isCorrect ? "CORRECT, stage is now: " + _stage : "WRONG", _moduleId);
+        Debug.LogFormat("[TheBulb #{2}] Pressing {0}: {1}.", o ? "O" : "I", isCorrect ? string.Format("CORRECT.{0} Stage is now: {1}", extra, stageToString(_stage)) : "WRONG", _moduleId);
         if (!isCorrect)
             Module.HandleStrike();
         else
