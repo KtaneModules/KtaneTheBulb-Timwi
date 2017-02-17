@@ -321,7 +321,7 @@ public class TheBulbModule : MonoBehaviour
                         _bulbColor == BulbColor.Yellow ? 15 :
                         _bulbColor == BulbColor.White ? 213 :
                         _bulbColor == BulbColor.Purple ? 12 : 13;
-                    if (_stage < 100)
+                    if (_stage < 100 && !_isBulbUnscrewed)
                     {
                         _wentOnBeforeStep12To15 = (Rnd.Range(0, 2) == 0);
                         extra = string.Format(" Bulb {0} at {1} button press.", _wentOnBeforeStep12To15 ? "went on" : "did NOT go on", o ? "O" : "I");
@@ -342,7 +342,7 @@ public class TheBulbModule : MonoBehaviour
                         _bulbColor == BulbColor.Blue ? 15 :
                         _bulbColor == BulbColor.Yellow ? 212 :
                         _bulbColor == BulbColor.Green ? 13 : 12;
-                    if (_stage < 100)
+                    if (_stage < 100 && !_isBulbUnscrewed)
                     {
                         _wentOnBeforeStep12To15 = (Rnd.Range(0, 2) == 0);
                         extra = string.Format(" Bulb {0} at {1} button press.", _wentOnBeforeStep12To15 ? "went on" : "did NOT go on", o ? "O" : "I");
