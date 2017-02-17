@@ -155,8 +155,13 @@ public class TheBulbModule : MonoBehaviour
         _isScrewing = false;
         if (@in && (_wasOnAtUnscrew || _wentOnBeforeStep12To15))
             TurnLights(on: true);
+
         if (_stage == 0)
+        {
+            Debug.LogFormat("[TheBulb #{1}] Module solved. The correct button presses were: {0}", _correctButtonPresses, _moduleId);
+            TurnLights(on: false);
             Module.HandlePass();
+        }
     }
 
     private void HandleBulb()
