@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Linq;
+using System.Text.RegularExpressions;
 using TheBulb;
 using UnityEngine;
 
@@ -395,5 +396,18 @@ public class TheBulbModule : MonoBehaviour
                 Module.HandlePass();
             }
         }
+    }
+
+    KMSelectable[] ProcessTwitchCommand(string command)
+    {
+        command = Regex.Replace(command, "  +", " ");
+        switch (command.ToLowerInvariant())
+        {
+            case "o": case "0": case "press o": case "press 0": return new[] { ButtonO };
+            case "i": case "1": case "press i": case "press 1": return new[] { ButtonI };
+            case "screw": case "screw in": case "screwin": case "s": return _isBulbUnscrewed ? new[] { Bulb } : null;
+            case "unscrew": case "u": return _isBulbUnscrewed ? null : new[] { Bulb };
+        }
+        return null;
     }
 }
