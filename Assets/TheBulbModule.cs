@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using TheBulb;
@@ -398,16 +399,46 @@ public class TheBulbModule : MonoBehaviour
         }
     }
 
-    KMSelectable[] ProcessTwitchCommand(string command)
+    IEnumerator ProcessTwitchCommand(string command)
     {
-        command = Regex.Replace(command, "  +", " ");
-        switch (command.ToLowerInvariant())
+        foreach (var piece in Regex.Replace(command.ToLowerInvariant(), " +", " ").Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
         {
-            case "o": case "0": case "press o": case "press 0": return new[] { ButtonO };
-            case "i": case "1": case "press i": case "press 1": return new[] { ButtonI };
-            case "screw": case "screw in": case "screwin": case "s": return _isBulbUnscrewed ? new[] { Bulb } : null;
-            case "unscrew": case "u": return _isBulbUnscrewed ? null : new[] { Bulb };
+            switch (piece.Trim())
+            {
+                case "o":
+                case "0":
+                case "press o":
+                case "press 0":
+                    ButtonO.OnInteract();
+                    yield return new WaitForSeconds(.1f);
+                    break;
+
+                case "i":
+                case "1":
+                case "press i":
+                case "press 1":
+                    ButtonI.OnInteract();
+                    yield return new WaitForSeconds(.1f);
+                    break;
+
+                case "screw":
+                case "screw in":
+                case "screw it in":
+                case "screwin":
+                case "screwitin":
+                    if (!_isBulbUnscrewed)
+                        yield break;
+                    Bulb.OnInteract();
+                    yield return new WaitForSeconds(.75f);
+                    break;
+
+                case "unscrew":
+                    if (_isBulbUnscrewed)
+                        yield break;
+                    Bulb.OnInteract();
+                    yield return new WaitForSeconds(.75f);
+                    break;
+            }
         }
-        return null;
     }
 }
