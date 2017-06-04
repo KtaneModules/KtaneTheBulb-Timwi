@@ -108,7 +108,7 @@ public class TheBulbModule : MonoBehaviour
 
         ButtonO.OnInteract += delegate { ButtonO.AddInteractionPunch(); HandleButtonPress(o: true); return false; };
         ButtonI.OnInteract += delegate { ButtonI.AddInteractionPunch(); HandleButtonPress(o: false); return false; };
-        Bulb.OnInteract += delegate { Bulb.AddInteractionPunch(); HandleBulb(); return false; };
+        Bulb.OnInteract += delegate { HandleBulb(); return false; };
 
         Module.OnActivate += delegate
         {
@@ -168,6 +168,7 @@ public class TheBulbModule : MonoBehaviour
 
     private void HandleBulb()
     {
+        Bulb.AddInteractionPunch();
         if (_isScrewing)
             return;
         _isScrewing = true;
@@ -401,6 +402,8 @@ public class TheBulbModule : MonoBehaviour
 
     IEnumerator ProcessTwitchCommand(string command)
     {
+        var actions = new List<Func<object>>();
+
         foreach (var piece in Regex.Replace(command.ToLowerInvariant(), " +", " ").Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
         {
             switch (piece.Trim())
@@ -409,16 +412,22 @@ public class TheBulbModule : MonoBehaviour
                 case "0":
                 case "press o":
                 case "press 0":
-                    ButtonO.OnInteract();
-                    yield return new WaitForSeconds(.1f);
+                    actions.Add(() =>
+                    {
+                        ButtonO.OnInteract();
+                        return .1f;
+                    });
                     break;
 
                 case "i":
                 case "1":
                 case "press i":
                 case "press 1":
-                    ButtonI.OnInteract();
-                    yield return new WaitForSeconds(.1f);
+                    actions.Add(() =>
+                    {
+                        ButtonI.OnInteract();
+                        return .1f;
+                    });
                     break;
 
                 case "screw":
@@ -426,18 +435,48 @@ public class TheBulbModule : MonoBehaviour
                 case "screw it in":
                 case "screwin":
                 case "screwitin":
-                    if (!_isBulbUnscrewed)
-                        yield break;
-                    Bulb.OnInteract();
-                    yield return new WaitForSeconds(.75f);
+                    actions.Add(() =>
+                    {
+                        if (!_isBulbUnscrewed)
+                            return null;
+                        Bulb.OnInteract();
+                        if (_stage == 0)
+                            return "solve";
+                        return "";
+                    });
                     break;
 
                 case "unscrew":
-                    if (_isBulbUnscrewed)
-                        yield break;
-                    Bulb.OnInteract();
-                    yield return new WaitForSeconds(.75f);
+                    actions.Add(() =>
+                    {
+                        if (_isBulbUnscrewed)
+                            return null;
+                        Bulb.OnInteract();
+                        return "";
+                    });
                     break;
+
+                default:
+                    yield break;
+            }
+        }
+
+        foreach (var action in actions)
+        {
+            var result = action();
+            if (result == null)
+                yield break;
+            else if (result is float)
+                yield return new WaitForSeconds((float) result);
+            else if (result is string)
+            {
+                if (!result.Equals(""))
+                    yield return result;
+                while (_isScrewing)
+                {
+                    yield return "trycancel";
+                    yield return new WaitForSeconds(.1f);
+                }
             }
         }
     }
