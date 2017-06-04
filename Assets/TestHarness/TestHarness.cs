@@ -728,8 +728,6 @@ public class TestHarness : MonoBehaviour
                     {
                         DoInteractionEnd(selectable);
                         heldSelectables.Remove(selectable);
-                        if (fakeInfo.strikes != initialStrikes || fakeInfo.GetSolvedModuleNames().Count != initialSolved)
-                            yield break;
                     }
                     else
                     {
@@ -740,12 +738,17 @@ public class TestHarness : MonoBehaviour
                 else if (currentObject is string)
                 {
                     Debug.Log("Twitch handler sent: " + currentObject);
+                    yield return currentObject;
                 }
                 else if (currentObject is Quaternion)
                 {
                     moduleTransform.localRotation = (Quaternion) currentObject;
                 }
-                yield return currentObject;
+                else
+                    yield return currentObject;
+
+                if (fakeInfo.strikes != initialStrikes || fakeInfo.GetSolvedModuleNames().Count != initialSolved)
+                    yield break;
             }
         }
     }
