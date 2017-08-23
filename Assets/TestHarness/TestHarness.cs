@@ -151,8 +151,9 @@ public class FakeBombInfo : MonoBehaviour
 
     void Awake()
     {
-        widgets = new Widget[5];
-        for (int a = 0; a < 5; a++)
+        const int numWidgets = 10;
+        widgets = new Widget[numWidgets];
+        for (int a = 0; a < numWidgets; a++)
         {
             int r = Random.Range(0, 3);
             if (r == 0) widgets[a] = new PortWidget();
@@ -179,7 +180,7 @@ public class FakeBombInfo : MonoBehaviour
         Debug.Log("Serial: " + serial);
     }
 
-    float startupTime = 3f;
+    float startupTime = .5f;
 
     public delegate void LightsOn();
     public LightsOn ActivateLights;
@@ -292,19 +293,14 @@ public class FakeBombInfo : MonoBehaviour
     {
         List<string> responses = new List<string>();
         if (queryKey == KMBombInfo.QUERYKEY_GET_SERIAL_NUMBER)
-        {
-            responses.Add(JsonConvert.SerializeObject((object) new Dictionary<string, string>()
-            {
-                {
-                    "serial", serial
-                }
-            }));
-        }
+            responses.Add(JsonConvert.SerializeObject(new Dictionary<string, string>() { { "serial", serial } }));
         foreach (Widget w in widgets)
         {
             string r = w.GetResult(queryKey, queryInfo);
             if (r != null) responses.Add(r);
         }
+        if (queryKey == "Unity")
+            responses.Add(JsonConvert.SerializeObject(new Dictionary<string, bool>() { { "Unity", true } }));
         return responses;
     }
 
@@ -406,7 +402,7 @@ public class TestHarness : MonoBehaviour
                 if (f.FieldType.Equals(typeof(KMGameInfo)))
                 {
                     KMGameInfo component = (KMGameInfo) f.GetValue(s);
-                    component.OnLightsChange += new KMGameInfo.KMLightsChangeDelegate(fakeInfo.OnLights);
+                    fakeInfo.OnLights += on => component.OnLightsChange(on);
                     //component.OnAlarmClockChange += new KMGameInfo.KMAlarmClockChangeDelegate(fakeInfo.OnAlarm);
                     continue;
                 }
@@ -728,6 +724,8 @@ public class TestHarness : MonoBehaviour
                     {
                         DoInteractionEnd(selectable);
                         heldSelectables.Remove(selectable);
+                        if (fakeInfo.strikes != initialStrikes || fakeInfo.GetSolvedModuleNames().Count != initialSolved)
+                            yield break;
                     }
                     else
                     {

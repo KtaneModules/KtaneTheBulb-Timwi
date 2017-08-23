@@ -104,7 +104,7 @@ public class TheBulbModule : MonoBehaviour
         _isBulbUnscrewed = false;
         _correctButtonPresses = "";
 
-        Debug.LogFormat("[TheBulb #{3}] Initial state: Color={0}, Opaque={1}, Initially on={2}", _bulbColor, _opaque, _initiallyOn, _moduleId);
+        Debug.LogFormat("[TheBulb #{3}] Bulb is {0}, {1} and {2}.", _bulbColor, _opaque ? "opaque" : "see-through", _initiallyOn ? "on" : "off", _moduleId);
 
         ButtonO.OnInteract += delegate { ButtonO.AddInteractionPunch(); HandleButtonPress(o: true); return false; };
         ButtonI.OnInteract += delegate { ButtonI.AddInteractionPunch(); HandleButtonPress(o: false); return false; };
