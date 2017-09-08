@@ -400,6 +400,8 @@ public class TheBulbModule : MonoBehaviour
         }
     }
 
+    public string TwitchHelpMessage = "Commands are “O”, “I”, “screw” and “unscrew”. Perform several commands with e.g. !{0} O, unscrew, I, screw.";
+
     IEnumerator ProcessTwitchCommand(string command)
     {
         var actions = new List<Func<object>>();
