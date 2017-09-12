@@ -74,6 +74,7 @@ public class TheBulbModule : MonoBehaviour
     private bool _wasOnAtUnscrew;
     private int _stage;
     private string _correctButtonPresses;
+    private bool _isSolved;
 
     private static int _moduleIdCounter = 1;
     private int _moduleId;
@@ -81,6 +82,7 @@ public class TheBulbModule : MonoBehaviour
     void Start()
     {
         _moduleId = _moduleIdCounter++;
+        _isSolved = false;
 
         if (Rnd.Range(0, 2) == 0)
         {
@@ -155,6 +157,10 @@ public class TheBulbModule : MonoBehaviour
             Bulb.transform.Translate(new Vector3(0, @in ? -.0015f : .0015f, 0));
         }
         _isScrewing = false;
+
+        if (_isSolved)
+            yield break;
+
         if (@in && (_wasOnAtUnscrew || _wentOnBeforeStep12To15))
             TurnLights(on: true);
 
@@ -163,6 +169,7 @@ public class TheBulbModule : MonoBehaviour
             Debug.LogFormat("[TheBulb #{1}] Module solved. The correct button presses were: {0}", _correctButtonPresses, _moduleId);
             TurnLights(on: false);
             Module.HandlePass();
+            _isSolved = true;
         }
     }
 
@@ -174,6 +181,9 @@ public class TheBulbModule : MonoBehaviour
         _isScrewing = true;
         StartCoroutine(Screw(_isBulbUnscrewed));
         _isBulbUnscrewed = !_isBulbUnscrewed;
+
+        if (_isSolved)
+            return;
 
         if (_mustUndoBulbScrewing)
         {
@@ -238,6 +248,9 @@ public class TheBulbModule : MonoBehaviour
     private void HandleButtonPress(bool o)
     {
         Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, Bulb.transform);
+
+        if (_isSolved)
+            return;
 
         if (_mustUndoBulbScrewing)
         {
@@ -396,6 +409,7 @@ public class TheBulbModule : MonoBehaviour
                 Debug.LogFormat("[TheBulb #{1}] Module solved. The correct button presses were: {0}", _correctButtonPresses, _moduleId);
                 TurnLights(on: false);
                 Module.HandlePass();
+                _isSolved = true;
             }
         }
     }
