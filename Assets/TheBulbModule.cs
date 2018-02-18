@@ -150,11 +150,16 @@ public class TheBulbModule : MonoBehaviour
             TurnLights(on: false);
         }
 
-        for (int i = 0; i < 360 / 10; i++)
+        var elapsed = 0f;
+        const float totalAnimationTime = 1f;
+
+        while (elapsed < totalAnimationTime)
         {
             yield return null;
-            Bulb.transform.Rotate(Vector3.up, @in ? 15 : -15);
-            Bulb.transform.Translate(new Vector3(0, @in ? -.0015f : .0015f, 0));
+            var delta = Time.deltaTime;
+            elapsed += delta;
+            Bulb.transform.Rotate(Vector3.up, (@in ? 1 : -1) * (540 * delta / totalAnimationTime));
+            Bulb.transform.Translate(new Vector3(0, (@in ? -1 : 1) * (0.054f * delta / totalAnimationTime), 0));
         }
         _isScrewing = false;
 
