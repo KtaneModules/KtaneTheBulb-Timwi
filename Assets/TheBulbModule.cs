@@ -419,7 +419,9 @@ public class TheBulbModule : MonoBehaviour
         }
     }
 
-    public string TwitchHelpMessage = "Commands are “O”, “I”, “screw” and “unscrew”. Perform several commands with e.g. !{0} O, unscrew, I, screw.";
+#pragma warning disable 414
+    private string TwitchHelpMessage = @"Commands are “!{0} O”, “!{0} I”, “!{0} screw” and “!{0} unscrew”. Perform several commands with e.g. “!{0} O, unscrew, I, screw”.";
+#pragma warning restore 414
 
     IEnumerator ProcessTwitchCommand(string command)
     {
@@ -481,6 +483,8 @@ public class TheBulbModule : MonoBehaviour
                     yield break;
             }
         }
+
+        yield return null;
 
         foreach (var action in actions)
         {
