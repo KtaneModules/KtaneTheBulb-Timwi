@@ -41,8 +41,8 @@ public class TheBulbModule : MonoBehaviour
     }
 
     private Color[] _haloColors = Ext.NewArray(
-        "6AA8FF",   // blue (was 3A9DFF)
-        "FF0005",   // red (was FF1E00)
+        "6AA8FF",   // blue
+        "FF0005",   // red
         "2EFD2F",   // green
         "EAE11F",   // yellow
         "D2D2D2",   // white
@@ -52,8 +52,8 @@ public class TheBulbModule : MonoBehaviour
         .ToArray();
 
     private Color[] _bulbColors = Ext.NewArray(
-        "1B3E70",   // blue (was 3A9DFF)
-        "FF0005",   // red (was FF1E00)
+        "1B3E70",   // blue
+        "FF0005",   // red
         "2EFD2F",   // green
         "EAE11F",   // yellow
         "D2D2D2",   // white
@@ -75,6 +75,8 @@ public class TheBulbModule : MonoBehaviour
     private int _stage;
     private string _correctButtonPresses;
     private bool _isSolved;
+    private bool _isButtonDown;
+    private Coroutine _buttonDownCoroutine;
 
     private static int _moduleIdCounter = 1;
     private int _moduleId;
@@ -108,8 +110,10 @@ public class TheBulbModule : MonoBehaviour
 
         Debug.LogFormat("[The Bulb #{3}] Bulb is {0}, {1} and {2}.", _bulbColor, _opaque ? "opaque" : "see-through", _initiallyOn ? "on" : "off", _moduleId);
 
-        ButtonO.OnInteract += delegate { ButtonO.AddInteractionPunch(); HandleButtonPress(o: true); return false; };
-        ButtonI.OnInteract += delegate { ButtonI.AddInteractionPunch(); HandleButtonPress(o: false); return false; };
+        ButtonO.OnInteract += delegate { ButtonO.AddInteractionPunch(); _buttonDownCoroutine = StartCoroutine(HandleLongPress(o: true)); return false; };
+        ButtonI.OnInteract += delegate { ButtonI.AddInteractionPunch(); _buttonDownCoroutine = StartCoroutine(HandleLongPress(o: false)); return false; };
+        ButtonO.OnInteractEnded += delegate { HandleButtonUp(o: true); };
+        ButtonI.OnInteractEnded += delegate { HandleButtonUp(o: false); };
         Bulb.OnInteract += delegate { HandleBulb(); return false; };
 
         Module.OnActivate += delegate
@@ -250,12 +254,38 @@ public class TheBulbModule : MonoBehaviour
         }
     }
 
-    private void HandleButtonPress(bool o)
+    private IEnumerator HandleLongPress(bool o)
     {
-        Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, Bulb.transform);
-
         if (_isSolved)
+            yield break;
+
+        _isButtonDown = true;
+        Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, Bulb.transform);
+        yield return new WaitForSeconds(.7f);
+        Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonRelease, Bulb.transform);
+        _isButtonDown = false;
+
+        if (_isBulbUnscrewed)
+        {
+            Debug.LogFormat("[The Bulb #{0}] You tried to reset while the bulb was unscrewed. That is not allowed.", _moduleId);
+            Module.HandleStrike();
+            yield break;
+        }
+
+        TurnLights(on: _initiallyOn);
+        _stage = 1;
+        _mustUndoBulbScrewing = false;
+        _correctButtonPresses = "";
+        Debug.LogFormat("[The Bulb #{0}] Module reset.", _moduleId);
+    }
+
+    private void HandleButtonUp(bool o)
+    {
+        if (!_isButtonDown || _isSolved)
             return;
+        if (_buttonDownCoroutine != null)
+            StopCoroutine(_buttonDownCoroutine);
+        _isButtonDown = false;
 
         if (_mustUndoBulbScrewing)
         {
@@ -420,12 +450,12 @@ public class TheBulbModule : MonoBehaviour
     }
 
 #pragma warning disable 414
-    private string TwitchHelpMessage = @"Commands are “!{0} O”, “!{0} I”, “!{0} screw” and “!{0} unscrew”. Perform several commands with e.g. “!{0} O, unscrew, I, screw”.";
+    private string TwitchHelpMessage = @"Commands are “!{0} O”, “!{0} I”, “!{0} screw” and “!{0} unscrew”. Perform several commands with e.g. “!{0} O, unscrew, I, screw”. Reset the module with “!{0} reset”.";
 #pragma warning restore 414
 
     IEnumerator ProcessTwitchCommand(string command)
     {
-        var actions = new List<Func<object>>();
+        var actions = new List<Func<object[]>>();
 
         foreach (var piece in Regex.Replace(command.ToLowerInvariant(), " +", " ").Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
         {
@@ -435,22 +465,14 @@ public class TheBulbModule : MonoBehaviour
                 case "0":
                 case "press o":
                 case "press 0":
-                    actions.Add(() =>
-                    {
-                        ButtonO.OnInteract();
-                        return .1f;
-                    });
+                    actions.Add(() => new object[] { ButtonO, new WaitForSeconds(.1f), ButtonO });
                     break;
 
                 case "i":
                 case "1":
                 case "press i":
                 case "press 1":
-                    actions.Add(() =>
-                    {
-                        ButtonI.OnInteract();
-                        return .1f;
-                    });
+                    actions.Add(() => new object[] { ButtonI, new WaitForSeconds(.1f), ButtonI });
                     break;
 
                 case "screw":
@@ -458,25 +480,15 @@ public class TheBulbModule : MonoBehaviour
                 case "screw it in":
                 case "screwin":
                 case "screwitin":
-                    actions.Add(() =>
-                    {
-                        if (!_isBulbUnscrewed)
-                            return null;
-                        Bulb.OnInteract();
-                        if (_stage == 0)
-                            return "solve";
-                        return "";
-                    });
+                    actions.Add(() => !_isBulbUnscrewed ? null : new object[] { Bulb, new WaitForSeconds(.1f), Bulb });
                     break;
 
                 case "unscrew":
-                    actions.Add(() =>
-                    {
-                        if (_isBulbUnscrewed)
-                            return null;
-                        Bulb.OnInteract();
-                        return "";
-                    });
+                    actions.Add(() => _isBulbUnscrewed ? null : new object[] { Bulb, new WaitForSeconds(.1f), Bulb });
+                    break;
+
+                case "reset":
+                    actions.Add(() => new object[] { ButtonI, new WaitForSeconds(1f), ButtonI });
                     break;
 
                 default:
@@ -491,18 +503,18 @@ public class TheBulbModule : MonoBehaviour
             var result = action();
             if (result == null)
                 yield break;
-            else if (result is float)
-                yield return new WaitForSeconds((float) result);
-            else if (result is string)
+            foreach (var obj in result)
             {
-                if (!result.Equals(""))
-                    yield return result;
+                yield return obj;
+                if (_stage == 0)
+                    yield return "solve";
                 while (_isScrewing)
                 {
                     yield return "trycancel";
                     yield return new WaitForSeconds(.1f);
                 }
             }
+            yield return new WaitForSeconds(.1f);
         }
     }
 }
