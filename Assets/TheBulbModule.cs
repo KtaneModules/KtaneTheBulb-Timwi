@@ -157,6 +157,8 @@ public class TheBulbModule : MonoBehaviour
         var elapsed = 0f;
         const float totalAnimationTime = 1f;
 
+        Audio.PlaySoundAtTransform(@in ? "ScrewIn" : "Unscrew", Bulb.transform);
+
         while (elapsed < totalAnimationTime)
         {
             yield return null;
@@ -176,9 +178,8 @@ public class TheBulbModule : MonoBehaviour
         if (_stage == 0)
         {
             Debug.LogFormat("[The Bulb #{1}] Module solved. The correct button presses were: {0}", _correctButtonPresses, _moduleId);
-            TurnLights(on: false);
             Module.HandlePass();
-            _isSolved = true;
+            StartCoroutine(victory());
         }
     }
 
@@ -260,7 +261,7 @@ public class TheBulbModule : MonoBehaviour
             yield break;
 
         _isButtonDown = true;
-        Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, Bulb.transform);
+        Audio.PlaySoundAtTransform("ButtonClick", (o ? ButtonO : ButtonI).transform);
         yield return new WaitForSeconds(.7f);
         Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonRelease, Bulb.transform);
         _isButtonDown = false;
@@ -442,15 +443,28 @@ public class TheBulbModule : MonoBehaviour
             if (_stage == 0)
             {
                 Debug.LogFormat("[The Bulb #{1}] Module solved. The correct button presses were: {0}", _correctButtonPresses, _moduleId);
-                TurnLights(on: false);
                 Module.HandlePass();
-                _isSolved = true;
+                StartCoroutine(victory());
             }
         }
     }
 
+    private IEnumerator victory()
+    {
+        _isSolved = true;
+        Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.CorrectChime, transform);
+
+        for (int i = 0; i < 5; i++)
+        {
+            TurnLights(on: true);
+            yield return new WaitForSeconds(.2f);
+            TurnLights(on: false);
+            yield return new WaitForSeconds(.2f);
+        }
+    }
+
 #pragma warning disable 414
-    private string TwitchHelpMessage = @"Commands are “!{0} O”, “!{0} I”, “!{0} screw” and “!{0} unscrew”. Perform several commands with e.g. “!{0} O, unscrew, I, screw”. Reset the module with “!{0} reset”.";
+    private readonly string TwitchHelpMessage = @"Commands are “!{0} O”, “!{0} I”, “!{0} screw” and “!{0} unscrew”. Perform several commands with e.g. “!{0} O, unscrew, I, screw”. Reset the module with “!{0} reset”.";
 #pragma warning restore 414
 
     IEnumerator ProcessTwitchCommand(string command)
