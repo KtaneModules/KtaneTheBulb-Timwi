@@ -76,6 +76,7 @@ public class TheBulbModule : MonoBehaviour
     private string _correctButtonPresses;
     private bool _isSolved;
     private bool _isButtonDown;
+    private bool _isLongPress;
     private Coroutine _buttonDownCoroutine;
 
     private static int _moduleIdCounter = 1;
@@ -261,32 +262,43 @@ public class TheBulbModule : MonoBehaviour
             yield break;
 
         _isButtonDown = true;
+        _isLongPress = false;
         Audio.PlaySoundAtTransform("ButtonClick", (o ? ButtonO : ButtonI).transform);
         yield return new WaitForSeconds(.7f);
         Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonRelease, Bulb.transform);
-        _isButtonDown = false;
-
-        if (_isBulbUnscrewed)
-        {
-            Debug.LogFormat("[The Bulb #{0}] You tried to reset while the bulb was unscrewed. That is not allowed.", _moduleId);
-            Module.HandleStrike();
-            yield break;
-        }
-
-        TurnLights(on: _initiallyOn);
-        _stage = 1;
-        _mustUndoBulbScrewing = false;
-        _correctButtonPresses = "";
-        Debug.LogFormat("[The Bulb #{0}] Module reset.", _moduleId);
+        _isLongPress = true;
     }
 
     private void HandleButtonUp(bool o)
     {
         if (!_isButtonDown || _isSolved)
             return;
+
         if (_buttonDownCoroutine != null)
+        {
             StopCoroutine(_buttonDownCoroutine);
+            _buttonDownCoroutine = null;
+        }
         _isButtonDown = false;
+
+        if (_isLongPress)
+        {
+            _isLongPress = false;
+
+            if (_isBulbUnscrewed)
+            {
+                Debug.LogFormat("[The Bulb #{0}] You tried to reset while the bulb was unscrewed. That is not allowed.", _moduleId);
+                Module.HandleStrike();
+                return;
+            }
+
+            TurnLights(on: _initiallyOn);
+            _stage = 1;
+            _mustUndoBulbScrewing = false;
+            _correctButtonPresses = "";
+            Debug.LogFormat("[The Bulb #{0}] Module reset.", _moduleId);
+            return;
+        }
 
         if (_mustUndoBulbScrewing)
         {
