@@ -1646,9 +1646,6 @@ MonoBehaviour:
   ButtonI: {fileID: 11471784}
   OFace: {fileID: 462536}
   IFace: {fileID: 477410}
-  TwitchHelpMessage: "Commands are \u201CO\u201D, \u201CI\u201D, \u201Cscrew\u201D
-    and \u201Cunscrew\u201D. Perform several commands with e.g. !{0} O, unscrew, I,
-    screw."
 --- !u!114 &11489324
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -124,6 +124,10 @@ public class TheBulbModule : MonoBehaviour
             else
                 TurnLights(on: _initiallyOn);
             _stage = 1;
+
+            float scalar = transform.lossyScale.x;
+            Light1.range *= scalar;
+            Light2.range *= scalar;
         };
     }
 
