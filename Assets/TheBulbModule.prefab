@@ -119,6 +119,7 @@ GameObject:
   - component: {fileID: 11489324}
   - component: {fileID: 11496072}
   - component: {fileID: 11485374}
+  - component: {fileID: 114504346025396562}
   m_Layer: 0
   m_Name: TheBulbModule
   m_TagString: Untagged
@@ -687,6 +688,7 @@ Transform:
   - {fileID: 462536}
   - {fileID: 477410}
   - {fileID: 427290}
+  - {fileID: 4013942055147182}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1637,10 +1639,12 @@ MonoBehaviour:
   Module: {fileID: 11429752}
   Bomb: {fileID: 11489324}
   Audio: {fileID: 11496072}
+  ModSettings: {fileID: 114504346025396562}
   Light1: {fileID: 10814156}
   Light2: {fileID: 10859864}
   Glass: {fileID: 2322122}
   Filament: {fileID: 1000014179546036}
+  ColorBlindIndicator: {fileID: 102418505208586234}
   ButtonO: {fileID: 11414260}
   Bulb: {fileID: 11429058}
   ButtonI: {fileID: 11471784}
@@ -1707,6 +1711,23 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &1934531197961918
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4013942055147182}
+  - component: {fileID: 23671101275804618}
+  - component: {fileID: 102418505208586234}
+  m_Layer: 0
+  m_Name: ColorBlindIndicator
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
 --- !u!4 &4000010459315690
 Transform:
   m_ObjectHideFlags: 1
@@ -1726,6 +1747,72 @@ Transform:
   m_Father: {fileID: 427290}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4013942055147182
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1934531197961918}
+  m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: -0.0675, y: 0.0167, z: 0.075}
+  m_LocalScale: {x: 0.0035, y: -0.0035, z: 0.0035}
+  m_Children: []
+  m_Father: {fileID: 474250}
+  m_RootOrder: 8
+  m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
+--- !u!23 &23671101275804618
+MeshRenderer:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1934531197961918}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_Materials:
+  - {fileID: 2100000, guid: 8758463ca26fdda43b91bfd10bbfee79, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+--- !u!102 &102418505208586234
+TextMesh:
+  serializedVersion: 3
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1934531197961918}
+  m_Text: BLUE
+  m_OffsetZ: 0
+  m_CharacterSize: 1
+  m_LineSpacing: 1
+  m_Anchor: 0
+  m_Alignment: 0
+  m_TabSize: 4
+  m_FontSize: 100
+  m_FontStyle: 0
+  m_RichText: 1
+  m_Font: {fileID: 12800000, guid: b1888f2017ebc704892d5a2648f6bd56, type: 3}
+  m_Color:
+    serializedVersion: 2
+    rgba: 4280952099
 --- !u!114 &114000010597505856
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1933,3 +2020,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ShaderNames:
   - Legacy Shaders/Diffuse
+--- !u!114 &114504346025396562
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 127088}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -289456416, guid: 45b809be76fd7a3468b6f517bced6f28, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Settings: '{"ColorBlindMode":false}'
+  SettingsPath: 

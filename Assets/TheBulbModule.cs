@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Newtonsoft.Json;
 using TheBulb;
 using UnityEngine;
 
@@ -17,11 +18,13 @@ public class TheBulbModule : MonoBehaviour
     public KMBombModule Module;
     public KMBombInfo Bomb;
     public KMAudio Audio;
+    public KMModSettings ModSettings;
 
     public Light Light1;
     public Light Light2;
     public MeshRenderer Glass;
     public GameObject Filament;
+    public TextMesh ColorBlindIndicator;
 
     public KMSelectable ButtonO;
     public KMSelectable Bulb;
@@ -129,6 +132,17 @@ public class TheBulbModule : MonoBehaviour
             Light1.range *= scalar;
             Light2.range *= scalar;
         };
+
+        try
+        {
+            var settings = JsonConvert.DeserializeObject<Dictionary<string, object>>(ModSettings.Settings);
+            if (settings != null && settings.ContainsKey("ColorBlindMode") && settings["ColorBlindMode"].Equals(true))
+            {
+                ColorBlindIndicator.text = _bulbColor.ToString();
+                ColorBlindIndicator.gameObject.SetActive(true);
+            }
+        }
+        catch { }
     }
 
     private string stageToString(int stage)
