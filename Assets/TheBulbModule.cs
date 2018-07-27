@@ -18,7 +18,6 @@ public class TheBulbModule : MonoBehaviour
     public KMBombModule Module;
     public KMBombInfo Bomb;
     public KMAudio Audio;
-    public KMModSettings ModSettings;
 
     public Light Light1;
     public Light Light2;
@@ -133,16 +132,11 @@ public class TheBulbModule : MonoBehaviour
             Light2.range *= scalar;
         };
 
-        try
+        if (GetComponent<KMColorblindMode>().ColorblindModeActive)
         {
-            var settings = JsonConvert.DeserializeObject<Dictionary<string, object>>(ModSettings.Settings);
-            if (settings != null && settings.ContainsKey("ColorBlindMode") && settings["ColorBlindMode"].Equals(true))
-            {
-                ColorBlindIndicator.text = _bulbColor.ToString();
-                ColorBlindIndicator.gameObject.SetActive(true);
-            }
+            ColorBlindIndicator.text = _bulbColor.ToString();
+            ColorBlindIndicator.gameObject.SetActive(true);
         }
-        catch { }
     }
 
     private string stageToString(int stage)
