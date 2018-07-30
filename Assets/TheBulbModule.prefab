@@ -119,7 +119,7 @@ GameObject:
   - component: {fileID: 11489324}
   - component: {fileID: 11496072}
   - component: {fileID: 11485374}
-  - component: {fileID: 114086376046824004}
+  - component: {fileID: 114311187879346998}
   m_Layer: 0
   m_Name: TheBulbModule
   m_TagString: Untagged
@@ -2020,7 +2020,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ShaderNames:
   - Legacy Shaders/Diffuse
---- !u!114 &114086376046824004
+--- !u!114 &114311187879346998
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -2028,7 +2028,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 127088}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dbdf1eff604709a438e21b87b312def3, type: 3}
+  m_Script: {fileID: 11500000, guid: c1cfb889a07d5fd4e9baed7960bb397f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _colorblindMode: 0

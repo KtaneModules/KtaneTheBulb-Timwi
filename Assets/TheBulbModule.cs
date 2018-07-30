@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using TheBulb;
+using KModkit;
 using UnityEngine;
 
 using Rnd = UnityEngine.Random;
@@ -361,10 +362,10 @@ public class TheBulbModule : MonoBehaviour
                 break;
 
             case 4:
-                if (isCorrect = (Bomb.IsIndicatorPresent(KMBombInfoExtensions.KnownIndicatorLabel.CAR) ||
-                    Bomb.IsIndicatorPresent(KMBombInfoExtensions.KnownIndicatorLabel.IND) ||
-                    Bomb.IsIndicatorPresent(KMBombInfoExtensions.KnownIndicatorLabel.MSA) ||
-                    Bomb.IsIndicatorPresent(KMBombInfoExtensions.KnownIndicatorLabel.SND) ? !o : o))
+                if (isCorrect = (Bomb.IsIndicatorPresent(Indicator.CAR) ||
+                    Bomb.IsIndicatorPresent(Indicator.IND) ||
+                    Bomb.IsIndicatorPresent(Indicator.MSA) ||
+                    Bomb.IsIndicatorPresent(Indicator.SND) ? !o : o))
                     _stage = o ? 10 : 9;
                 break;
 
@@ -379,13 +380,13 @@ public class TheBulbModule : MonoBehaviour
                 break;
 
             case 7:
-                _rememberedIndicatorPresent = Bomb.IsIndicatorPresent(_bulbColor == BulbColor.Blue ? KMBombInfoExtensions.KnownIndicatorLabel.CLR : KMBombInfoExtensions.KnownIndicatorLabel.SIG);
+                _rememberedIndicatorPresent = Bomb.IsIndicatorPresent(_bulbColor == BulbColor.Blue ? Indicator.CLR : Indicator.SIG);
                 if (isCorrect = ((_bulbColor == BulbColor.Green) || (_bulbColor == BulbColor.Purple) ? !o : o))
                     _stage = (_bulbColor == BulbColor.Blue) || (_bulbColor == BulbColor.Green) ? 11 : (_bulbColor == BulbColor.Purple) ? 212 : 213;
                 break;
 
             case 8:
-                _rememberedIndicatorPresent = Bomb.IsIndicatorPresent(_bulbColor == BulbColor.White ? KMBombInfoExtensions.KnownIndicatorLabel.FRQ : KMBombInfoExtensions.KnownIndicatorLabel.FRK);
+                _rememberedIndicatorPresent = Bomb.IsIndicatorPresent(_bulbColor == BulbColor.White ? Indicator.FRQ : Indicator.FRK);
                 if (isCorrect = ((_bulbColor == BulbColor.White) || (_bulbColor == BulbColor.Red) ? !o : o))
                     _stage = (_bulbColor == BulbColor.White) || (_bulbColor == BulbColor.Yellow) ? 11 : (_bulbColor == BulbColor.Red) ? 213 : 212;
                 break;
