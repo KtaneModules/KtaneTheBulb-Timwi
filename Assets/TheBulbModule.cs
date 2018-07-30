@@ -133,11 +133,8 @@ public class TheBulbModule : MonoBehaviour
             Light2.range *= scalar;
         };
 
-        if (GetComponent<KMColorblindMode>().ColorblindModeActive)
-        {
-            ColorBlindIndicator.text = _bulbColor.ToString();
-            ColorBlindIndicator.gameObject.SetActive(true);
-        }
+        ColorBlindIndicator.text = _bulbColor.ToString();
+        ColorBlindIndicator.gameObject.SetActive(GetComponent<KMColorblindMode>().ColorblindModeActive);
     }
 
     private string stageToString(int stage)
@@ -489,11 +486,18 @@ public class TheBulbModule : MonoBehaviour
     }
 
 #pragma warning disable 414
-    private readonly string TwitchHelpMessage = @"Commands are “!{0} O”, “!{0} I”, “!{0} screw” and “!{0} unscrew”. Perform several commands with e.g. “!{0} O, unscrew, I, screw”. Reset the module with “!{0} reset”.";
+    private readonly string TwitchHelpMessage = @"Commands are “!{0} O”, “!{0} I”, “!{0} screw” and “!{0} unscrew”. Perform several commands with e.g. “!{0} O, unscrew, I, screw”. Reset the module with “!{0} reset”. Use “!{0} colorblind” to show the color of the bulb.";
 #pragma warning restore 414
 
     IEnumerator ProcessTwitchCommand(string command)
     {
+        if (command == "colorblind")
+        {
+            yield return null;
+            ColorBlindIndicator.gameObject.SetActive(true);
+            yield break;
+        }
+
         var actions = new List<Func<object[]>>();
 
         foreach (var piece in Regex.Replace(command.ToLowerInvariant(), " +", " ").Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
