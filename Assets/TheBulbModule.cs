@@ -3,11 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Newtonsoft.Json;
-using TheBulb;
 using KModkit;
+using TheBulb;
 using UnityEngine;
-
 using Rnd = UnityEngine.Random;
 
 /// <summary>
@@ -120,21 +118,15 @@ public class TheBulbModule : MonoBehaviour
         ButtonI.OnInteractEnded += delegate { HandleButtonUp(o: false); };
         Bulb.OnInteract += delegate { HandleBulb(); return false; };
 
-        Module.OnActivate += delegate
-        {
-            if (_isBulbUnscrewed || _isScrewing)
-                _wasOnAtUnscrew = _initiallyOn;
-            else
-                TurnLights(on: _initiallyOn);
-            _stage = 1;
-
-            float scalar = transform.lossyScale.x;
-            Light1.range *= scalar;
-            Light2.range *= scalar;
-        };
-
         ColorBlindIndicator.text = _bulbColor.ToString();
         ColorBlindIndicator.gameObject.SetActive(GetComponent<KMColorblindMode>().ColorblindModeActive);
+
+        TurnLights(on: _initiallyOn);
+        _stage = 1;
+
+        float scalar = transform.lossyScale.x;
+        Light1.range *= scalar;
+        Light2.range *= scalar;
     }
 
     private string stageToString(int stage)
@@ -165,19 +157,21 @@ public class TheBulbModule : MonoBehaviour
             TurnLights(on: false);
         }
 
-        var elapsed = 0f;
-        const float totalAnimationTime = 1f;
-
         Audio.PlaySoundAtTransform(@in ? "ScrewIn" : "Unscrew", Bulb.transform);
 
-        while (elapsed < totalAnimationTime)
+        const float duration = 1f;
+        var elapsed = 0f;
+        var totalAngle = 540;
+        var distance = 1.5f;
+        while (elapsed < duration)
         {
+            Bulb.transform.localEulerAngles = new Vector3(0, totalAngle * ((@in ? duration - elapsed : elapsed) / duration), 0);
+            Bulb.transform.localPosition = new Vector3(0, distance * (@in ? duration - elapsed : elapsed) / duration, 0);
             yield return null;
-            var delta = Time.deltaTime;
-            elapsed += delta;
-            Bulb.transform.Rotate(Vector3.up, (@in ? 1 : -1) * (540 * delta / totalAnimationTime));
-            Bulb.transform.Translate(new Vector3(0, (@in ? -1 : 1) * (0.054f * delta / totalAnimationTime), 0));
+            elapsed += Time.deltaTime;
         }
+        Bulb.transform.localEulerAngles = new Vector3(0, @in ? 0 : totalAngle, 0);
+        Bulb.transform.localPosition = new Vector3(0, @in ? 0 : distance, 0);
         _isScrewing = false;
 
         if (_isSolved)
