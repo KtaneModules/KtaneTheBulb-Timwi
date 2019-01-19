@@ -120,6 +120,7 @@ GameObject:
   - component: {fileID: 11496072}
   - component: {fileID: 11485374}
   - component: {fileID: 114311187879346998}
+  - component: {fileID: 114153353308545176}
   m_Layer: 0
   m_Name: TheBulbModule
   m_TagString: Untagged
@@ -1609,6 +1610,8 @@ MonoBehaviour:
   Module: {fileID: 11429752}
   Bomb: {fileID: 11489324}
   Audio: {fileID: 11496072}
+  ColorblindMode: {fileID: 114311187879346998}
+  RuleSeedable: {fileID: 114153353308545176}
   Light1: {fileID: 10814156}
   Light2: {fileID: 10859864}
   Glass: {fileID: 2322122}
@@ -2027,6 +2030,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ShaderNames:
   - Legacy Shaders/Diffuse
+--- !u!114 &114153353308545176
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 127088}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: adf69c2de51bd3c43bbd9bc22578ee08, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _seed: 1
 --- !u!114 &114311187879346998
 MonoBehaviour:
   m_ObjectHideFlags: 1
