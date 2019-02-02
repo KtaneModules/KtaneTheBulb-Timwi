@@ -936,6 +936,8 @@ public class TheBulbModule : MonoBehaviour
                     TurnLights(on: _goOnAtScrewIn = (Rnd.Range(0, 2) == 0));
                     extra = string.Format(" Light {0} at {1} button press.", _goOnAtScrewIn ? "came on" : "stayed off", o ? "O" : "I");
                 }
+                else if (_stage % 100 == 5 || _stage % 100 == 6)
+                    TurnLights(on: false);
             }
         }
 
