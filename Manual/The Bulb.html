@@ -44,7 +44,7 @@
     </style>
     <script>
 
-        var _colors = ['red', 'green', 'blue', 'yellow', 'white', 'purple'];
+        var _colors = ['blue', 'red', 'green', 'yellow', 'white', 'purple'];
 
         var _conditions = [
             ["the bulb is see-through"],
@@ -73,8 +73,8 @@
                     "the bomb has an odd number of ports",
                     "the bomb has an even number of port plates",
                     "the bomb has an odd number of port plates",
-                    "the bomb has an even number of unique port types",
-                    "the bomb has an odd number of unique port types"
+                    "the bomb has an even number of distinct port types",
+                    "the bomb has an odd number of distinct port types"
                 ],
                 [
                     "the bomb has a lit indicator",
@@ -94,8 +94,8 @@
                     "the bomb has an IND indicator",
                     "the bomb has an MSA indicator",
                     "the bomb has an NSA indicator",
-                    "the bomb has a SIG indicator",
-                    "the bomb has a SND indicator",
+                    "the bomb has an SIG indicator",
+                    "the bomb has an SND indicator",
                     "the bomb has a TRN indicator"
                 ],
                 [
@@ -108,13 +108,6 @@
                 ]
             ]
         ];
-
-        function rmv(list, element)
-        {
-            var pos = list.indexOf(element);
-            if (pos !== -1)
-                list.splice(pos, 1);
-        }
 
         function deepCopy(arr)
         {
@@ -145,7 +138,7 @@
                 return _defaultRules;
 
             _defaultRules = {};
-            for (var i = 0; i < 12; i++)
+            for (var i = 0; i < 15; i++)
                 _defaultRules[i] = document.getElementById(`step-${i+1}`).innerHTML;
 
             return _defaultRules;
@@ -154,7 +147,7 @@
         function setDefaultRules()
         {
             ensureDefaultRules();
-            for (var i = 0; i < 12; i++)
+            for (var i = 0; i < 15; i++)
                 document.getElementById(`step-${i+1}`).innerHTML = _defaultRules[i];
         }
 
@@ -288,7 +281,7 @@
                     if (stepsTypes[step] === 0)
                     {
                         // Two colors and a boolean
-                        b1 = `the bulb is ${colors2_3[step-7][1]}`;
+                        b1 = `the bulb is ${colors1[step*3 - 20]}`;
                     }
                     else
                     {
@@ -359,15 +352,15 @@
                         <li>If ${stepsConds[step][0]}:
                             <ul>
                                 <li>If the bulb is ${colors4[step*3 - 27]}, press <strong>I</strong> and go to <strong>Step 14</strong>.</li>
-                                <li>If the bulb is ${colors4[step*3 - 27 + 1]}, press <strong>I</strong>, screw it back in and go to <strong>Step 12</strong>.</li>
+                                <li>If the bulb is ${colors4[step*3 - 27 + 1]}, press <strong>I</strong>, screw it back in and go to <strong>Step ${step + 3}</strong>.</li>
                                 <li>Otherwise, press <strong>O</strong> and go to <strong>Step 15</strong>.</li>
                             </ul>
                         </li>
                         <li>Otherwise:
                             <ul>
-                                <li>If the bulb is ${colors4[step*3 - 27]}, press <strong>O</strong>, screw it back in and go to <strong>Step 13</strong>.</li>
-                                <li>If the bulb is ${colors4[step*3 - 27 + 1]}, screw it back in, press <strong>I</strong> and go to <strong>Step 12</strong>.</li>
-                                <li>Otherwise, screw the bulb back in, press <strong>O</strong> and go to <strong>Step 13</strong>.</li>
+                                <li>If the bulb is ${colors4[step*3 - 27]}, press <strong>O</strong>, screw it back in and go to <strong>Step ${step === 9 ? 13 : 12}</strong>.</li>
+                                <li>If the bulb is ${colors4[step*3 - 27 + 1]}, screw it back in, press <strong>I</strong> and go to <strong>Step ${step === 9 ? 12 : 13}</strong>.</li>
+                                <li>Otherwise, screw the bulb back in, press <strong>O</strong> and go to <strong>Step ${step === 9 ? 13 : 12}</strong>.</li>
                             </ul>
                         </li>
                     `;
@@ -378,8 +371,8 @@
             for (var step = 14; step <= 15; step++)
             {
                 document.getElementById(`step-${step}`).innerHTML = `
-                    <li>If ${stepsConds[14][0]}, press <strong>${step === 14 ? 'I' : 'O'}</strong>.</li>
-                    <li>Otherwise, press <strong>${step === 14 ? 'O' : 'I'}</strong>.</li>
+                    <li>If ${stepsConds[14][0]}, press <strong>${step === 14 ? 'I' : 'O'}</strong>, then screw the bulb back in.</li>
+                    <li>Otherwise, press <strong>${step === 14 ? 'O' : 'I'}</strong>, then screw the bulb back in.</li>
                 `;
             }
 
