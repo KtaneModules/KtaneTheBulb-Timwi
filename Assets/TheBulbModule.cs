@@ -94,8 +94,7 @@ public class TheBulbModule : MonoBehaviour
     // For rule seed
     struct StepRule
     {
-        // Param 1: module
-        // Param 2: whether “O” was pressed (otherwise it was “I”)
+        // Param: whether “O” was pressed (otherwise it was “I”)
         // Return: null if strike; otherwise new step number, potentially plus 100 (unscrew first)/200 (screw first); 0 for solve
         public Func<bool, int?> ButtonPress;
         public Func<int?> BulbScrew;
@@ -1043,6 +1042,106 @@ public class TheBulbModule : MonoBehaviour
                 }
             }
             yield return new WaitForSeconds(.1f);
+        }
+    }
+
+    IEnumerator TwitchHandleForcedSolve()
+    {
+        while (_stage > 0)
+        {
+            while (_isScrewing)
+                yield return true;
+
+            KMSelectable buttonToPress = null;
+
+            if (_mustUndoBulbScrewing)
+                buttonToPress = Bulb;
+            else if (_rules == null)
+            {
+                switch (_stage)
+                {
+                    case 1:
+                        buttonToPress = !_initiallyOn ? Bulb : _opaque ? ButtonO : ButtonI;
+                        break;
+
+                    case 2:
+                        buttonToPress = _bulbColor == BulbColor.Red ? ButtonI : _bulbColor == BulbColor.White ? ButtonO : Bulb;
+                        break;
+
+                    case 3:
+                        buttonToPress = _bulbColor == BulbColor.Green ? ButtonI : _bulbColor == BulbColor.Purple ? ButtonO : Bulb;
+                        break;
+
+                    case 4:
+                        buttonToPress = Bomb.IsIndicatorPresent(Indicator.CAR) ||
+                            Bomb.IsIndicatorPresent(Indicator.IND) ||
+                            Bomb.IsIndicatorPresent(Indicator.MSA) ||
+                            Bomb.IsIndicatorPresent(Indicator.SND) ? ButtonI : ButtonO;
+                        break;
+
+                    case 5:
+                        buttonToPress = _wentOffAtStep1 ? (_pressedOAtStep1 ? ButtonO : ButtonI) : (_pressedOAtStep1 ? ButtonI : ButtonO);
+                        break;
+
+                    case 6:
+                        buttonToPress = (_wentOffAtStep1 ^ _pressedOAtStep1) ? (_pressedOAtStep1 ? ButtonO : ButtonI) : (_pressedOAtStep1 ? ButtonI : ButtonO);
+                        break;
+
+                    case 7:
+                        buttonToPress = (_bulbColor == BulbColor.Green) || (_bulbColor == BulbColor.Purple) ? ButtonI : ButtonO;
+                        break;
+
+                    case 8:
+                        buttonToPress = (_bulbColor == BulbColor.White) || (_bulbColor == BulbColor.Red) ? ButtonI : ButtonO;
+                        break;
+
+                    case 9:
+                        buttonToPress =
+                            _bulbColor == BulbColor.Blue || _bulbColor == BulbColor.Green ? ButtonI :
+                            _bulbColor == BulbColor.Yellow || _bulbColor == BulbColor.White ? ButtonO : Bulb;
+                        break;
+
+                    case 10:
+                        buttonToPress =
+                            _bulbColor == BulbColor.Purple || _bulbColor == BulbColor.Red ? ButtonI :
+                            _bulbColor == BulbColor.Blue || _bulbColor == BulbColor.Yellow ? ButtonO : Bulb;
+                        break;
+
+                    case 11:
+                        buttonToPress = _rememberedRule ? ButtonI : ButtonO;
+                        break;
+
+                    case 12:
+                        buttonToPress = _isOn ? ButtonI : ButtonO;
+                        break;
+
+                    case 13:
+                        buttonToPress = _isOn ? ButtonO : ButtonI;
+                        break;
+
+                    case 14:
+                        buttonToPress = _opaque ? ButtonI : ButtonO;
+                        break;
+
+                    case 15:
+                        buttonToPress = _opaque ? ButtonO : ButtonI;
+                        break;
+
+                    default:
+                        buttonToPress = Bulb;
+                        break;
+                }
+            }
+            else
+                buttonToPress = _stage >= 100 ? Bulb : _rules[_stage].BulbScrew() != null ? Bulb : _rules[_stage].ButtonPress(true) != null ? ButtonO : ButtonI;
+
+            buttonToPress.OnInteract();
+            yield return new WaitForSeconds(.1f);
+            if (buttonToPress.OnInteractEnded != null)
+            {
+                buttonToPress.OnInteractEnded();
+                yield return new WaitForSeconds(.1f);
+            }
         }
     }
 }
