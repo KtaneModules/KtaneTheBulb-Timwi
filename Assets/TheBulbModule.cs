@@ -1098,13 +1098,17 @@ public class TheBulbModule : MonoBehaviour
                     case 9:
                         buttonToPress =
                             _bulbColor == BulbColor.Blue || _bulbColor == BulbColor.Green ? ButtonI :
-                            _bulbColor == BulbColor.Yellow || _bulbColor == BulbColor.White ? ButtonO : Bulb;
+                            _bulbColor == BulbColor.Yellow || _bulbColor == BulbColor.White ? ButtonO :
+                            _isBulbUnscrewed ? Bulb :
+                            _bulbColor == BulbColor.Purple ? ButtonI : ButtonO;
                         break;
 
                     case 10:
                         buttonToPress =
                             _bulbColor == BulbColor.Purple || _bulbColor == BulbColor.Red ? ButtonI :
-                            _bulbColor == BulbColor.Blue || _bulbColor == BulbColor.Yellow ? ButtonO : Bulb;
+                            _bulbColor == BulbColor.Blue || _bulbColor == BulbColor.Yellow ? ButtonO :
+                            _isBulbUnscrewed ? Bulb :
+                            _bulbColor == BulbColor.Green ? ButtonI : ButtonO;
                         break;
 
                     case 11:
@@ -1143,5 +1147,8 @@ public class TheBulbModule : MonoBehaviour
                 yield return new WaitForSeconds(.1f);
             }
         }
+
+        while (!_isSolved)
+            yield return true;
     }
 }
