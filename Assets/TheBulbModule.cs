@@ -246,6 +246,7 @@ public class TheBulbModule : MonoBehaviour
         return elem;
     }
 
+    // true = “press I”, false = “press O”
     bool eval(object rule)
     {
         if (rule is Func<KMBombInfo, bool>)
@@ -253,7 +254,8 @@ public class TheBulbModule : MonoBehaviour
         else if (rule is Func<TheBulbModule, bool>)
             return ((Func<TheBulbModule, bool>) rule)(this);
         else if (rule is ExtraRandom)
-            return rule.Equals(ExtraRandom.IsLightOnNow) ? (_stage == 12 || _stage == 13 ? _goOnAtScrewIn : _isOn) : _wentOffAtStep1;
+            // For the WentOffAtStep1 case, the manual says “if the light was still on after step 1”, which is the opposite of “went off at step 1”
+            return rule.Equals(ExtraRandom.IsLightOnNow) ? (_stage == 12 || _stage == 13 ? _goOnAtScrewIn : _isOn) : !_wentOffAtStep1;
         else
         {
             Debug.LogFormat(@"<The Bulb #{0}> eval() encountered unexpected “{1}”", _moduleId, rule);
