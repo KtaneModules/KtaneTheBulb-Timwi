@@ -90,6 +90,7 @@ public class TheBulbModule : MonoBehaviour
 
     private static int _moduleIdCounter = 1;
     private int _moduleId;
+    private bool _colorblind;
 
     // For rule seed
     struct StepRule
@@ -300,8 +301,9 @@ public class TheBulbModule : MonoBehaviour
         ButtonI.OnInteractEnded += delegate { HandleButtonUp(o: false); };
         Bulb.OnInteract += delegate { HandleBulb(); return false; };
 
+        _colorblind = ColorblindMode.ColorblindModeActive;
         ColorBlindIndicator.text = _bulbColor.ToString();
-        ColorBlindIndicator.gameObject.SetActive(ColorblindMode.ColorblindModeActive);
+        ColorBlindIndicator.gameObject.SetActive(_colorblind);
 
         TurnLights(on: _initiallyOn);
         _stage = 1;
@@ -979,7 +981,8 @@ public class TheBulbModule : MonoBehaviour
     {
         if (command == "colorblind")
         {
-            ColorBlindIndicator.gameObject.SetActive(true);
+            _colorblind = !_colorblind;
+            ColorBlindIndicator.gameObject.SetActive(_colorblind);
             yield return null;
             yield break;
         }
