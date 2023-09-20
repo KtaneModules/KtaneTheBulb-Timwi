@@ -1,0 +1,10 @@
+{
+  "name": "TheBulb-Editor",
+  "references": [
+    "TheBulb"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": []
+}

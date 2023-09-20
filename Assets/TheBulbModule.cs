@@ -510,6 +510,7 @@ public class TheBulbModule : MonoBehaviour
 
                 for (var step = 9; step <= 10; step++)
                 {
+                    var curStep = step; // required for lambda capture
                     var col = colors9_10[step - 9];
                     Debug.LogFormat(@"<The Bulb #{0}> Step {1} colors: {2}", _moduleId, step, string.Join(", ", col.Select(c => c.ToString()).ToArray()));
                     _rules[step] = new StepRule
@@ -524,7 +525,7 @@ public class TheBulbModule : MonoBehaviour
                                 : (_isBulbUnscrewed ? strike : (o ? 13 : strike)),
 
                         // Note that _isBulbUnscrewed here has the NEW value because this is evaluated AFTER the boolean is flipped
-                        BulbScrew = () => _isBulbUnscrewed ? strike : 9
+                        BulbScrew = () => _isBulbUnscrewed ? strike : curStep
                     };
                 }
             }

@@ -13,6 +13,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: TheBulb
   title: The Bulb
+  author: Timwi
   description: 'How many bomb defusal experts does it take to screw in a light bulb?
 
 
